@@ -1,0 +1,34 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define FOR(i,a,b) 	for(int i=a;i<b;++i)
+#define RFOR(i,a,b) 	for(int i=b;i>=a;--i)
+#define ln 		"\n"
+#define mp make_pair
+#define pb push_back
+#define pii pair<ll,ll>
+#define sz(a)	ll(a.size())
+typedef long long ll;
+typedef long double ld;
+map<ll,ll> counter;
+std::vector<bool> visit(100002);
+ll fastexpo(ll x,ll y,ll m){ll temp=1;while(y>0){if(y&1)temp = ((temp%m)*(x%m))%m;x = ((x%m)*(x%m))%m;y>>=1;}return temp;}
+int main()
+{
+		ios_base::sync_with_stdio(false);
+	 	cin.tie(NULL);
+	 	string s;
+	 	cin>>s;
+	 	int len=s.length(),str=0,pearl=0;
+	 	FOR(i,0,len)
+	 	{
+	 		if(s[i]=='o')pearl++;
+	 		else str++;
+	 	}
+	 	if(pearl)
+	 	{
+	 		if(str%pearl)cout<<"NO";
+	 		else cout<<"YES";
+		}
+		else cout<<"YES";
+		return 0;
+}
