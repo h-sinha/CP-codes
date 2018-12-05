@@ -18,10 +18,10 @@ using namespace std;
 #define RFOR(i,a,b) 	for(int i=a;i>=b;--i)
 #define ln 		"\n"
 #define mp make_pair
+#define pb push_back
 #define sz(a)	ll(a.size())
 #define F first
 #define S second
-#define pb push_back
 #define all(c)	c.begin(),c.end()
 #define trace(c,x) for(auto &x:c)
 #define pii pair<ll,ll>
@@ -29,41 +29,46 @@ typedef long long ll;
 typedef long double ld;
 typedef	priority_queue<pii,std::vector<pii>,greater<pii> > revpr;
 const int L=1e6+7;
-map<ll,ll> counter;
-int a[L];
-vector<int> v[L];
+std::vector<int> a,b;
+ll power[L];
+void pre()
+{
+	power[0] = 1;
+	FOR(i,1,31)power[i] = power[i-1]*2;
+}
 int main()
 {
-		ios_base::sync_with_stdio(false);
-	 	cin.tie(NULL);
-	 	int n, g;
-	 	cin >> n;
-	 	FOR(i,1,n+1)cin >> a[i];
-	 	FOR(i,1,n+1)
-	 	{
-	 		int l=i, r=i;
-	 		FOR(j,i+1,n+1)
-	 		{
-	 			if(a[j]%a[i])break;
-	 			r=j;
-	 		}
-	 		RFOR(j,i-1,1)
-	 		{
-	 			if(a[j]%a[i])break;
-	 			l=j;
-	 		}
-	 		i = r;
-	 		v[r-l].pb(l);
-	 	}
-	 	RFOR(i,n,0)
-	 	{
-	 		// debug(i,sz(v[i]));
-	 		if(sz(v[i]))
-	 		{
-	 			cout<<sz(v[i])<<" "<<i<<ln;
-	 			trace(v[i],x)cout<<x<<" ";
-	 			break;
-	 		}
-	 	}
+		ll val1=0,val2=0,o1,o2,cur;
+		pre();
+		cout<<"? 0 0\n";
+		fflush(stdout);
+		cin >> cur;
+		RFOR(i,29,0)
+		{
+			cout<<"? "<<(val1|power[i])<<" "<<val2<<endl;
+			fflush(stdout);
+			cin >> o1;
+			cout<<"? "<<val1<<" "<<(val2|power[i])<<endl;
+			fflush(stdout);
+			cin >> o2;
+			if(o1 == o2)
+			{
+				if(cur == 1)
+					val1 = val1 | power[i];
+				else
+					val2 = val2 | power[i];
+
+				cur = o1;
+
+			}
+			else if(o1 == -1) 
+			{
+				val1 = val1 | power[i];
+				val2 = val2 | power[i];
+			}
+			
+		}
+		cout<<"! "<<val1<<" "<<val2;
+		fflush(stdout);
 		return 0;
 }

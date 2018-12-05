@@ -18,10 +18,10 @@ using namespace std;
 #define RFOR(i,a,b) 	for(int i=a;i>=b;--i)
 #define ln 		"\n"
 #define mp make_pair
+#define pb push_back
 #define sz(a)	ll(a.size())
 #define F first
 #define S second
-#define pb push_back
 #define all(c)	c.begin(),c.end()
 #define trace(c,x) for(auto &x:c)
 #define pii pair<ll,ll>
@@ -30,40 +30,48 @@ typedef long double ld;
 typedef	priority_queue<pii,std::vector<pii>,greater<pii> > revpr;
 const int L=1e6+7;
 map<ll,ll> counter;
-int a[L];
-vector<int> v[L];
+ll fastexpo(ll x,ll y,ll m)
+{
+	ll temp=1;
+	while(y>0)
+	{
+		if(y&1)temp = ((temp%m)*(x%m))%m;
+		x = ((x%m)*(x%m))%m;
+		y>>=1;
+	}return temp;
+}
+ll a[L];
 int main()
 {
 		ios_base::sync_with_stdio(false);
 	 	cin.tie(NULL);
-	 	int n, g;
-	 	cin >> n;
-	 	FOR(i,1,n+1)cin >> a[i];
-	 	FOR(i,1,n+1)
+	 	ll n,k;
+	 	cin >> n >> k;
+	 	FOR(i,0,n)cin >> a[i];
+	 	multiset<ll>SET;
+	 	FOR(i,0,n)
 	 	{
-	 		int l=i, r=i;
-	 		FOR(j,i+1,n+1)
-	 		{
-	 			if(a[j]%a[i])break;
-	 			r=j;
-	 		}
-	 		RFOR(j,i-1,1)
-	 		{
-	 			if(a[j]%a[i])break;
-	 			l=j;
-	 		}
-	 		i = r;
-	 		v[r-l].pb(l);
-	 	}
-	 	RFOR(i,n,0)
-	 	{
-	 		// debug(i,sz(v[i]));
-	 		if(sz(v[i]))
-	 		{
-	 			cout<<sz(v[i])<<" "<<i<<ln;
-	 			trace(v[i],x)cout<<x<<" ";
-	 			break;
-	 		}
-	 	}
+	 		if(a[i])
+	 		SET.insert(a[i]);
+		}
+		ll sofar=0;
+		while(k--)
+		{
+			// trace(SET,x)cout<<x<<" ";
+			if(sz(SET))
+			{
+				while(sz(SET) && *SET.begin()-sofar <=0 )SET.erase(SET.begin());
+				if(sz(SET) ==0)
+				{
+					cout<<"0\n";
+					continue;
+				}
+				// cout<<"sda";
+				cout<<*(SET.begin())-sofar<<ln;
+				sofar = *(SET.begin());
+				SET.erase(SET.begin());
+			}
+			else cout<<"0"<<ln;
+		}
 		return 0;
 }
