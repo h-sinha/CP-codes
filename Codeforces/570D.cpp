@@ -1,136 +1,116 @@
 #include<bits/stdc++.h>
 using namespace std;
+#define DEBUG
+#ifdef DEBUG
+#define debug(...) __f(#__VA_ARGS__, __VA_ARGS__)
+	template <typename Arg1>
+	void __f(const char* name, Arg1&& arg1){
+		cerr << name << " : " << arg1 << std::endl;
+	}
+	template <typename Arg1, typename... Args>
+	void __f(const char* names, Arg1&& arg1, Args&&... args){
+		const char* comma = strchr(names + 1, ','); cerr.write(names, comma - names) << " : " << arg1<<" | ";__f(comma+1, args...);
+	}
+#else
+#define debug(...)
+#endif
 #define FOR(i,a,b) 	for(int i=a;i<b;++i)
 #define RFOR(i,a,b) 	for(int i=a;i>=b;--i)
 #define ln 		"\n"
 #define mp make_pair
 #define pb push_back
-#define pii pair<int,char>
 #define sz(a)	ll(a.size())
-#define debug1(x) cout<<x<<endl
-#define debug2(x,y) cout<<x<<"-->"<<y<<endl
-#define debug3(x,y,z) cout<<x<<"-->"<<y<<"-->"<<z<<endl
 #define F first
 #define S second
 #define all(c)	c.begin(),c.end()
 #define trace(c,x) for(auto &x:c)
-#define	revpr priority_queue<pii,std::vector<pii>,greater<pii> >;
+#define pii pair<ll,ll>
 typedef long long ll;
 typedef long double ld;
-map<ll,ll> counter;
+typedef	priority_queue<pii,std::vector<pii>,greater<pii> > revpr;
 const int L=5e5+7;
-std::vector<int> v[L];
-std::vector<pii> seg[4*L];
-int posinbase[L],t=1,start[L],endis[L],distanceroot[L];
-string str;
-void dfs(int vertex,int parent,int dist)
+string s;
+std::vector<bool> visit(L);
+int tim = 0, endTime[L], startTime[L], maxDepth, dp[L][26], co[26];
+std::vector<int> depth[L], depthTime[L], cumSum[L][26], v[L];
+void dfs(int vertex, int dpt)
 {
-	start[vertex]=t++;
-	posinbase[t-1]=vertex;
-	distanceroot[vertex]=dist+1;
-	trace(v[vertex],x)
-		if(x!=parent)
-			dfs(x,vertex,dist+1);
-	endis[vertex]=t-1;
-	// posinbase[t-1]=vertex;
-}
-void build(int s,int e,int index)
-{
-	if(s>=e)
+	if(visit[vertex])return;
+	// debug(vertex);
+	startTime[vertex] = tim++;
+	depth[dpt].pb(vertex);
+	visit[vertex] = 1;
+	depthTime[dpt].pb(tim-1);
+	maxDepth = max(maxDepth, dpt);
+	trace(v[vertex], x)
 	{
-		seg[index].pb(mp(distanceroot[posinbase[s]],str[posinbase[s]-1]));
-		// cout<<str[s-1]<<" "<<posinbase[s]<<endl;
-		return;
+		dfs(x, dpt+1);
 	}
-	int mid=(s+e)>>1;
-	build(s,mid,index<<1);
-	build(mid+1,e,(index<<1)+1);
-	trace(seg[index<<1],x)seg[index].pb(x);
-	trace(seg[(index<<1)+1],x)seg[index].pb(x);
-	sort(all(seg[index]));
-	return;
+	endTime[vertex] = tim-1;
 }
-bool comp(const pii x,int y)
-{
-	return x.F<y;
-}
-struct node{
-	int arr[26]={0};
-};
-node au;
-node query(int s,int e,int index,int l,int r,int val)
-{
-	// node temp;
-	// FOR(i,0,26)temp.arr[i]=0;
-	if(s>e || s>r || e<l )return au;
-	if(s>=l && e<=r)
-	{
-		// string ret="";
-		// std::vecto> v;
-		std::vector<pii>::iterator it,itup;
-		it=lower_bound(all(seg[index]),val,comp);
-		itup=lower_bound(all(seg[index]),val,comp);
-		// it--;
-		// cout<<*it;
-		// cout<<val<<" "<<it.F<<endl;
-		node temp;
-		while(it!=seg[index].end() && (*it).F==val)
-		{
-			// ret+=(*it).S;
-			temp.arr[(*it).S-'a']++;
-			++it;
-		}
-		// cout<<"s"<<endl;
-		return temp;
-	}
-	node q1,q2;
-	int mid=(s+e)>>1;
-	q1=query(s,mid,index<<1,l,r,val);
-	q2=query(mid+1,e,(index<<1)+1,l,r,val);
-	FOR(i,0,26)q1.arr[i]+=q2.arr[i];
-	return q1;
-}
-int co[27];
 int main()
 {
 		ios_base::sync_with_stdio(false);
-	 	cin.tie(NULL),cout.tie(NULL);
-		int n,m,a,b;
-		cin>>n>>m;
+	 	cin.tie(NULL);
+		int n, m, a, h, st, en;
+		cin >> n >> m;
 		FOR(i,2,n+1)
 		{
-			cin>>a;
+			cin >> a;
 			v[a].pb(i);
 			v[i].pb(a);
 		}
-		cin>>str;
-		dfs(1,-1,0);
-		--t;
-		build(1,t,1);
-		FOR(i,0,26)au.arr[i]=0;
-		FOR(i,1,4*n+1)
+		cin >> s;
+		int odd = 0;
+		dfs(1, 1);
+		// debug(s);
+		FOR(i, 1, maxDepth + 1)
 		{
-			FOR(j,0,26)seg[i]
-		}
-		// FOR(i,1,7)cout<<posinbase[i]<<endl;
-		// FOR(i,1,25)cout<<posinbase[i]<<" ";
-		while(m--)
-		{
-			node tmp;
-			int odd=0,eve=0,len;
-			cin>>a>>b;
-			tmp=query(1,t,1,start[a],endis[a],b);
-			// len=tmp.length();
-			// if(len==0){cout<<"Yes"<<ln;continue;}
-			// FOR(i,0,26)co[i]=0;
-			// FOR(i,0,len)co[tmp[i]-'a']++;
-			FOR(i,0,26)
+			FOR(j, 0, sz(depth[i]))
 			{
-				if(tmp.arr[i]&1)odd++;
-				else if(tmp.arr[i])eve++;
+				dp[j][s[depth[i][j] - 1] - 'a']++;
+				if(!j)continue;
+				FOR(k,0,26)
+					dp[j][k] += dp[j-1][k];
 			}
-			if(odd>1)cout<<"No"<<ln;
-			else cout<<"Yes"<<ln;
+			FOR(j, 0, sz(depth[i]))
+			{
+				FOR(k,0,26)
+				{
+					cumSum[i][k].pb(dp[j][k]);
+					dp[j][k] = 0;
+				}
+			}
 		}
+		int l, r, len;
+		FOR(j,0,m)
+		{
+			cin >> a >> h;
+			st = startTime[a], en = endTime[a];
+			l = upper_bound(all(depthTime[h]), st-1) - depthTime[h].begin();
+			r = upper_bound(all(depthTime[h]), en) - depthTime[h].begin() - 1;
+			// debug(l,r);
+			if(l>r)cout<<"Yes\n";
+			else
+			{
+				odd = 0;
+				FOR(i,0,26)
+				{
+					if(l)co[i] = cumSum[h][i][r] - cumSum[h][i][l-1];
+					else co[i] = cumSum[h][i][r];
+				}
+				FOR(i,0,26)
+				{
+					if(co[i]&1)odd++;
+					co[i] = 0;
+				}
+				len = r-l+1;
+				if(odd==1 && len&1)cout<<"Yes\n";
+				else if (len%2 ==0 && odd == 0)cout<<"Yes\n";
+				else cout<<"No\n";
+			}
+			// debug(j);
+		}
+		// cout<<"dsa";
 		return 0;
 }
