@@ -38,71 +38,43 @@ typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_upda
 //*X.find_by_order(k-1)
 //NO OF ELEMENTS < A
 //X.order_of_key(A)
-struct node
-{
-	int l, r, q;
-};
-const int L=1e6+7;
-int ans = 0, ss, co[L], counter[L], a[L], out[L];
-std::map<int,int> code;
-std::vector<node> v;
-bool comp(node x, node y)
-{
-	if(x.l/400 == y.l/400)return x.r < y.r;
-	return x.l < y.l;
-}
-void add(int i)
-{
-	int tmp;
-	counter[co[i]]++;
 
-	tmp = counter[co[i]];
-	if(tmp == a[i])ans++;
-	else if(tmp-1 == a[i])ans--;
-}
-void rem(int i)
+const int L=1e6+7;
+map<ll,ll> counter;
+ll fastexpo(ll x,ll y,ll m)
 {
-	int tmp;
-	counter[co[i]]--;
-	tmp = counter[co[i]];
-	if(tmp == a[i])ans++;
-	else if(tmp+1 == a[i])ans--;
+	ll temp=1;
+	while(y>0)
+	{
+		if(y&1)temp = ((temp%m)*(x%m))%m;
+		x = ((x%m)*(x%m))%m;
+		y>>=1;
+	}return temp;
 }
 int main()
 {
 		ios_base::sync_with_stdio(false);
 	 	cin.tie(NULL);
-	 	int n, m, hs = 0, l, r;
-	 	cin >> n >> m;
-	 	FOR(i,1,n+1)
+	 	int t;
+	 	string s;
+	 	cin >> t;
+	 	while(t--)
 	 	{
-	 		cin >> a[i];
-	 		if(code.find(a[i]) == code.end())
+	 		cin >> s;
+	 		int len = s.length(), f=0;
+	 		for (int i = 0; i < len; i+=2)
 	 		{
-	 			code[a[i]] = hs;
-	 			co[i] = hs++;
+	 			if(s[i] == 'A' && s[i + 1] == 'B')continue;
+	 			else if(s[i] == 'B' && s[i + 1] == 'A')continue;
+	 			else
+	 			{
+	 				f=1;
+	 				cout<<"no\n";
+	 				break;
+	 			}
 	 		}
-	 		else co[i] = code[a[i]];
+	 		if(f)continue;
+	 		cout<<"yes\n";
 	 	}
-	 	node tmp;
-	 	FOR(i,0,m)
-	 	{
-	 		cin >> l >> r;
-	 		tmp.l = l;
-	 		tmp.r = r;
-	 		tmp.q = i;
-	 		v.pb(tmp);
-	 	}
-	 	sort(all(v), comp);
-	 	int curl = 1, curr = 0;
-	 	trace(v, x)
-	 	{
-	 		while(curr<x.r)add(++curr);
-	 		while(curr>x.r)rem(curr--);
-	 		while(curl<x.l)rem(curl++);
-	 		while(curl>x.l)add(--curl);
-	 		out[x.q] = ans;
-	 	}
-	 	FOR(i,0,m)cout<<out[i]<<ln;
 		return 0;
 }

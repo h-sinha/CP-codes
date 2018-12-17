@@ -38,71 +38,79 @@ typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_upda
 //*X.find_by_order(k-1)
 //NO OF ELEMENTS < A
 //X.order_of_key(A)
-struct node
-{
-	int l, r, q;
-};
-const int L=1e6+7;
-int ans = 0, ss, co[L], counter[L], a[L], out[L];
-std::map<int,int> code;
-std::vector<node> v;
-bool comp(node x, node y)
-{
-	if(x.l/400 == y.l/400)return x.r < y.r;
-	return x.l < y.l;
-}
-void add(int i)
-{
-	int tmp;
-	counter[co[i]]++;
 
-	tmp = counter[co[i]];
-	if(tmp == a[i])ans++;
-	else if(tmp-1 == a[i])ans--;
-}
-void rem(int i)
+const int L=1e6+7;
+std::vector<ll> v;
+ll power[35];
+void po()
 {
-	int tmp;
-	counter[co[i]]--;
-	tmp = counter[co[i]];
-	if(tmp == a[i])ans++;
-	else if(tmp+1 == a[i])ans--;
+	power[0] = 1;
+	FOR(i,1,31)
+	{
+		power[i] = (power[i-1]*2);
+	}
+}
+ll convert(int *arr, int len)
+{
+	ll num = 0;
+	FOR(i,0,len+1)
+	{
+		if(arr[i])num += power[i];
+	}
+	return num;
+}
+void pre()
+{
+	po();
+	int tmp, f;
+	int arr[35];
+	FOR(i,1,31)
+	{
+		tmp = 0;
+		for (int j = 0; j < 31; j+=i)
+		{
+
+			f=0;
+			FOR(k,j,j+i)
+			{
+				if(k >= 31)
+				{
+					f=1;
+					break;
+				}
+				arr[k] = tmp;
+			}
+			if(!f && tmp)v.pb(convert(arr, j+i-1));
+			tmp = 1-tmp;
+		}
+		tmp = 1;
+		for (int j = 0; j < 31; j+=i)
+		{
+			FOR(k,j,j+i)
+			{
+				if(k >= 31)break;
+				arr[k] = tmp;
+			}
+			if(tmp)v.pb(convert(arr, j+i-1));
+			tmp = 1-tmp;
+		}
+	}
+	return;
 }
 int main()
 {
 		ios_base::sync_with_stdio(false);
 	 	cin.tie(NULL);
-	 	int n, m, hs = 0, l, r;
-	 	cin >> n >> m;
-	 	FOR(i,1,n+1)
-	 	{
-	 		cin >> a[i];
-	 		if(code.find(a[i]) == code.end())
-	 		{
-	 			code[a[i]] = hs;
-	 			co[i] = hs++;
-	 		}
-	 		else co[i] = code[a[i]];
-	 	}
-	 	node tmp;
-	 	FOR(i,0,m)
+	 	pre();
+	 	int t, l, r;
+	 	cin >> t;
+	 	sort(all(v));
+	 	// trace(v, x)cout<<x<<" ";
+	 	// cout<<endl;
+	 	while(t--)
 	 	{
 	 		cin >> l >> r;
-	 		tmp.l = l;
-	 		tmp.r = r;
-	 		tmp.q = i;
-	 		v.pb(tmp);
+	 		cout<<(upper_bound(all(v), r)) - lower_bound(all(v), l)<<ln;
 	 	}
-	 	sort(all(v), comp);
-	 	int curl = 1, curr = 0;
-	 	trace(v, x)
-	 	{
-	 		while(curr<x.r)add(++curr);
-	 		while(curr>x.r)rem(curr--);
-	 		while(curl<x.l)rem(curl++);
-	 		while(curl>x.l)add(--curl);
-	 		out[x.q] = ans;
-	 	}
-	 	FOR(i,0,m)cout<<out[i]<<ln;
 		return 0;
 }
