@@ -43,9 +43,11 @@ const int L=1002;
 std::vector<int> v[L];
 int mx = INT_MIN, start = -1;
 std::vector<bool> visit(L);
+std::vector<int> depth(L), depth1(L);
 void dfs(int vertex, int parent = -1, int _depth = 0)
 {
 	visit[vertex] = 1;
+	depth1[vertex] = _depth;
 	if(_depth > mx)
 	{
 		mx = _depth;
@@ -57,11 +59,12 @@ void dfs(int vertex, int parent = -1, int _depth = 0)
 			dfs(x, vertex, _depth + 1);
 	}
 }
-set<int>depth[L];
+set<int>cur;
 void findRoot(int vertex, int parent = -1, int _depth = 0)
 {
-	depth[_depth].insert(vertex);
+	cur.insert(vertex);
 	mx = max(mx, _depth);
+	depth[vertex] = _depth;
 	trace(v[vertex], x)
 	{
 		if(x != parent)
@@ -81,33 +84,36 @@ int main()
 	 		v[a].pb(b);
 	 		v[b].pb(a);
 	 	}
-	 	std::vector<int> root;
+	 	std::vector<pii> root;
 	 	FOR(i,1,n+1)
 	 	{
 	 		if(!visit[i])
 	 		{
-	 			FOR(j,0,n+1)depth[j].clear();
+	 			cur.clear();
 	 			mx = INT_MIN;
 	 			start = -1;
 	 			dfs(i);
 	 			mx = INT_MIN;
 	 			findRoot(start);
-	 			root.pb(*(depth[mx/2].begin()));
+	 			trace(cur, x)if(depth1[x] == mx/2 && depth[x] == mx - mx/2)start = x;
+	 			root.pb(mp(mx, start));
 	 		}
+
 	 	}
-	 	int id = root[0];
 	 	std::vector<pii> ans;
+	 	sort(all(root));
+	 	// trace(root,x )cout<<x.F<<" - "<<x.S<<ln;
+	 	int st = root[sz(root) - 1].S;
 	 	trace(root, x)
 	 	{
-	 		if(x == id)continue;
-	 		v[x].pb(id);
-	 		v[id].pb(x);
-	 		ans.pb(mp(x, id));
+	 		if(x.S == st)continue;
+	 		v[x.S].pb(st);
+	 		v[st].pb(x.S);
+	 		ans.pb(mp(x.S, st));
 	 	}
-	 	mx = INT_MIN;
-	 	start = -1;
+	 	mx = -1, start = -1;
 	 	dfs(1);
-	 	mx = INT_MIN;
+	 	mx = -1;
 	 	findRoot(start);
 	 	cout<<mx<<ln;
 	 	trace(ans, x)cout<<x.F<<" "<<x.S<<ln;
