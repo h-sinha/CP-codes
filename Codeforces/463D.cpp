@@ -39,43 +39,50 @@ typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_upda
 //NO OF ELEMENTS < A
 //X.order_of_key(A)
 
-const int L=1e6+7;
-map<ll,ll> counter;
-ll fastexpo(ll x,ll y,ll m)
-{
-	ll temp=1;
-	while(y>0)
-	{
-		if(y&1)temp = ((temp%m)*(x%m))%m;
-		x = ((x%m)*(x%m))%m;
-		y>>=1;
-	}return temp;
-}
-std::vector<ll> f;
-set<ll> ans;
-void solve(ll n)
-{
-	ll tmp = sqrt(n), i ;
-	for ( i = 1; i <=tmp ; ++i)
-	{
-		if(n%i)continue;
-		f.pb(i);
-		f.pb(n/i);
-	}
-}
+const int L=1e3+7;
+int dp[L][L], a[5][L], deg[L];
+std::vector<int> v[L], ans(L, 1);
 int main()
 {
 		ios_base::sync_with_stdio(false);
 	 	cin.tie(NULL);
-	 	ll n, tmp, tr;
-	 	cin >> n;
-	 	tmp = n;
-	 	solve(n);
-	 	trace(f, x)
-	 	{	
-	 		tr = tmp/x;
-	 		ans.insert( (tr*(2 + (tr-1)* x))/2);
+	 	int n, k, tmp;
+	 	cin >> n >> k;
+	 	FOR(i,0,k)
+	 		FOR(j,0,n)
+	 			cin >> a[i][j];
+	 	FOR(i,0,k)
+	 		FOR(j,0,n)
+	 			FOR(l,j+1,n)
+	 				dp[a[i][j]][a[i][l]]++;
+	 	FOR(i,1,n+1)
+	 	{
+	 		FOR(j,1,n+1)
+	 		{
+	 			if(dp[i][j] == k)
+	 			{
+	 				v[j].pb(i);
+	 				deg[i]++;
+	 			}
+	 		}
 	 	}
-	 	trace(ans,x)cout<<x<<" ";
+	 	queue <int> q;
+	 	FOR(i,1,n+1)
+	 	{
+	 		if(deg[i] == 0)q.push(i);
+	 	}
+	 	while(!q.empty())
+	 	{
+	 		tmp = q.front();
+	 		q.pop();
+	 		trace(v[tmp], x)
+	 		{
+	 			ans[x] = max(ans[x], ans[tmp] + 1);
+	 			deg[x]--;
+	 			if(deg[x] == 0)q.push(x);
+	 		}
+	 	}
+	 	int mx = INT_MIN;
+	 	cout<<*max_element(all(ans));
 		return 0;
 }

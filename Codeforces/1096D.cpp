@@ -40,42 +40,32 @@ typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_upda
 //X.order_of_key(A)
 
 const int L=1e6+7;
-map<ll,ll> counter;
-ll fastexpo(ll x,ll y,ll m)
+int n, a[L];
+string s, org;
+ll dp[L][5];
+ll solve(int i, int sofar)
 {
-	ll temp=1;
-	while(y>0)
+	if(i>=n)return 0;
+	if(sofar != -1 && dp[i][sofar] != -1)return dp[i][sofar];
+	if(s[i] == org[sofar + 1])
 	{
-		if(y&1)temp = ((temp%m)*(x%m))%m;
-		x = ((x%m)*(x%m))%m;
-		y>>=1;
-	}return temp;
-}
-std::vector<ll> f;
-set<ll> ans;
-void solve(ll n)
-{
-	ll tmp = sqrt(n), i ;
-	for ( i = 1; i <=tmp ; ++i)
-	{
-		if(n%i)continue;
-		f.pb(i);
-		f.pb(n/i);
+		if(sofar < 2)
+			return dp[i][sofar] = min(solve(i+1,sofar + 1), solve(i+1, sofar) + a[i]);
+		else
+			return dp[i][sofar] = solve(i+1, sofar) + a[i];
 	}
+	else return dp[i][sofar] = solve(i+1, sofar);
 }
 int main()
 {
 		ios_base::sync_with_stdio(false);
 	 	cin.tie(NULL);
-	 	ll n, tmp, tr;
 	 	cin >> n;
-	 	tmp = n;
-	 	solve(n);
-	 	trace(f, x)
-	 	{	
-	 		tr = tmp/x;
-	 		ans.insert( (tr*(2 + (tr-1)* x))/2);
-	 	}
-	 	trace(ans,x)cout<<x<<" ";
+	 	cin >> s;
+	 	org = "hard";
+	 	FOR(i,0,n)FOR(j,0,4)dp[i][j] = -1;
+	 	FOR(i,0,n)cin >> a[i];
+		cout<<solve(0,-1);
+		// FOR(i,0,n)FOR(j,0,4)debug(i,j,dp[i][j]);
 		return 0;
 }

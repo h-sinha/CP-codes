@@ -62,7 +62,7 @@ int main()
 	 	{
 	 		cin >> x >> y;
 	 		xx+=x;
-	 		yy +=y;
+	 		yy+=y;
 	 	}
 	 	cout<<xx/n<<" "<<yy/n;
 		return 0;

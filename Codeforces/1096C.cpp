@@ -40,42 +40,45 @@ typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_upda
 //X.order_of_key(A)
 
 const int L=1e6+7;
-map<ll,ll> counter;
-ll fastexpo(ll x,ll y,ll m)
+std::vector<ll> ans(182,INT_MAX);
+std::vector<bool> done(182);
+void pre()
 {
-	ll temp=1;
-	while(y>0)
+	ld fl, ce;
+	int aux, tmp;
+	FOR(i,1,180)
 	{
-		if(y&1)temp = ((temp%m)*(x%m))%m;
-		x = ((x%m)*(x%m))%m;
-		y>>=1;
-	}return temp;
-}
-std::vector<ll> f;
-set<ll> ans;
-void solve(ll n)
-{
-	ll tmp = sqrt(n), i ;
-	for ( i = 1; i <=tmp ; ++i)
+		fl = floor(360.0/(180.0-i));
+		ce = ceil(360.0/(180.0-i));
+		if(fl != ce || fl <= 2)continue;
+		ans[i] = fl;
+	}
+	RFOR(i,179,1)
 	{
-		if(n%i)continue;
-		f.pb(i);
-		f.pb(n/i);
+		if(ans[i]-2 <= 0 || done[i])continue;
+		tmp = i/(ans[i]-2);
+		if((ans[i]-2)*tmp != i)continue;
+		aux = i;
+		while(aux > 0)
+		{
+			ans[aux] = min(ans[i], ans[aux]);
+			if(ans[aux] == ans[i])done[aux] = 1;
+			aux -= tmp;
+		}
 	}
 }
 int main()
 {
 		ios_base::sync_with_stdio(false);
 	 	cin.tie(NULL);
-	 	ll n, tmp, tr;
-	 	cin >> n;
-	 	tmp = n;
-	 	solve(n);
-	 	trace(f, x)
-	 	{	
-	 		tr = tmp/x;
-	 		ans.insert( (tr*(2 + (tr-1)* x))/2);
+	 	pre();
+	 	int n, t;
+	 	cin >> t;
+	 	while(t--)
+	 	{
+	 		cin >> n;
+	 		if(ans[n] == INT_MAX)cout<<"-1\n";
+	 		else cout<<ans[n]<<ln;
 	 	}
-	 	trace(ans,x)cout<<x<<" ";
 		return 0;
 }

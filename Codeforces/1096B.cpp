@@ -51,31 +51,40 @@ ll fastexpo(ll x,ll y,ll m)
 		y>>=1;
 	}return temp;
 }
-std::vector<ll> f;
-set<ll> ans;
-void solve(ll n)
-{
-	ll tmp = sqrt(n), i ;
-	for ( i = 1; i <=tmp ; ++i)
-	{
-		if(n%i)continue;
-		f.pb(i);
-		f.pb(n/i);
-	}
-}
+std::vector<int> mn(27,INT_MAX), mx(27, INT_MIN);
 int main()
 {
 		ios_base::sync_with_stdio(false);
 	 	cin.tie(NULL);
-	 	ll n, tmp, tr;
-	 	cin >> n;
-	 	tmp = n;
-	 	solve(n);
-	 	trace(f, x)
-	 	{	
-	 		tr = tmp/x;
-	 		ans.insert( (tr*(2 + (tr-1)* x))/2);
+	 	string s;
+	 	ll f = 0, len, l, r;
+	 	cin >> len;
+	 	cin >> s;
+	 	len = s.length();
+	 	FOR(i,0,len)
+	 	{
+	 		FOR(j,0,26)
+	 		{
+	 			if((s[i]-'a') == j)continue;
+	 			mn[j] = min(mn[j], i);
+	 			mx[j] = max(mx[j], i);
+	 		}
 	 	}
-	 	trace(ans,x)cout<<x<<" ";
+	 	ll ans = 0, m = 998244353; 
+	 	FOR(i,0,26)
+	 	{
+	 		if(mx[i] == INT_MIN)
+	 		{
+	 			cout<<((len*(len-1))/2)%m;
+	 			return 0;
+	 		}
+	 		r = (len - mx[i] - 1);
+	 		l = (mn[i] - 0);
+	 		if(l == 0 && r == 0)continue;
+	 		f = 1;
+	 		ans = (ans + (r+1)*(l+1) - 1 + m)%m;
+	 	}
+	 	if(f)ans = (ans+1)%m;
+	 	cout<<ans;
 		return 0;
 }
