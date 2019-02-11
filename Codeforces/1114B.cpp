@@ -51,35 +51,42 @@ ll fastexpo(ll x,ll y,ll m)
 		y>>=1;
 	}return temp;
 }
+std::vector<ll> a(L),b(L);
+int mark[L];
 int main()
 {
 		ios_base::sync_with_stdio(false);
 	 	cin.tie(NULL);
-	 	int n;
-	 	cin >> n;
-	 	string s;
-	 	cin >> s;
-	 	std::vector<char> v;
-	 	v.pb('B');
-	 	v.pb('G');
-	 	v.pb('R');
-	 	string tt = "RGB";
-	 	int ans =n;
-	 	do{
-	 		int co = 0;
-	 		FOR(i,0,n)
+	 	int n, m,k;
+	 	cin >> n >> m >> k;
+	 	std::vector<pii> v;
+	 	FOR(i,0,n)
+	 	{
+	 		cin >> a[i];
+	 		v.pb(mp(a[i],i));
+	 	}
+	 	sort(all(v));
+	 	RFOR(i,n-1,n-m*k)
+	 	{
+	 		mark[v[i].S] = 1;
+	 	}
+	 	int co = 0;
+	 	ll sumis = 0;
+	 	std::vector<int> ans;
+	 	FOR(i,0,n)
+	 	{
+	 		if(mark[i] == 1)
 	 		{
-	 			if(s[i] != v[i%3])co++;
+	 			co++;
+	 			sumis+=a[i];
 	 		}
-	 		if(ans > co)
+	 		if(co == m && sz(ans) < k-1)
 	 		{
-	 			ans = co;
-	 			tt[0] = v[0];
-	 			tt[1] = v[1];
-	 			tt[2] = v[2];
+	 			ans.pb(i+1);
+	 			co = 0;
 	 		}
-	 	}while(next_permutation(all(v)));
-		cout<<ans<<ln;
-		FOR(i,0,n)cout<<tt[i%3];
-		return 0;
+	 	}
+	 	cout<<sumis<<ln;
+	 	trace(ans,x)cout<<x<<" ";
+	 	return 0;
 }

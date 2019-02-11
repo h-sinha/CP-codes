@@ -39,67 +39,28 @@ typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_upda
 //NO OF ELEMENTS < A
 //X.order_of_key(A)
 
-const int L=1e6+7;
-map<ll,ll> counter;
-ll fastexpo(ll x,ll y,ll m)
+const int L=103;
+ll dp[L][L][L], a[L], n;
+string s;
+ll solve(int start, int end, int counter)
 {
-	ll temp=1;
-	while(y>0)
+	if(start > end)return 0;
+	if(dp[start][end][counter])return dp[start][end][counter];
+	ll ans = a[counter] + solve(start + 1, end, 0);
+	FOR(i,start+1,end+1)
 	{
-		if(y&1)temp = ((temp%m)*(x%m))%m;
-		x = ((x%m)*(x%m))%m;
-		y>>=1;
-	}return temp;
+		if(s[i] != s[start])continue;
+		ans = max(ans, solve(start + 1, i - 1, 0) + solve(i , end, counter + 1));
+	}
+	return dp[start][end][counter] = ans;
 }
-int co[L];
-ll a[L];
-std::vector<ll> v;
 int main()
 {
 		ios_base::sync_with_stdio(false);
 	 	cin.tie(NULL);
-	 	ll n,x=1,y=1;
-	 	cin >> n;
-	 	FOR(i,0,n)
-	 	{
-	 		cin >> a[i];
-	 		co[a[i]]++;
-	 	}
-	 	sort(a,a+n);
-	 	int tmp = sqrt(a[n-1]) + 1;
-	 	FOR(i,1,tmp)
-	 	{
-	 		if(a[n-1]%i == 0)
-	 		{
-	 			co[i]--;
-	 			if(a[n-1]/i != i)
-	 			{
-	 				co[a[n-1]/i]--;
-	 			}
-	 		}
-	 	}
-	 	FOR(i,0,10001)
-	 	{
-	 		if(co[i])
-	 		{
-	 			v.pb(i);
-	 		}
-	 	}
-	 	sort(all(v));
-	 	cout<<v[sz(v)-1]<<" "<<a[n-1]<<ln;
-	 	// FOR(i,0,n)
-	 	// {
-	 	// 	if(co[a[i]] == 2)
-	 	// 	{
-	 	// 		x*=a[i];
-	 	// 		y*=a[i];
-	 	// 		co[a[i]] = 0;
-	 	// 	}
-	 	// 	else if(co[a[i]])
-	 	// 	{
-	 	// 		v.pb(a[i]);
-	 	// 	}
-	 	// }
-	 	// cout<<x<<" "<<y<<ln;
+		cin >> n;
+		cin >> s;
+		FOR(i,0,n)cin >> a[i];
+		cout<<solve(0, n-1, 0);	 	
 		return 0;
 }

@@ -55,13 +55,28 @@ int main()
 {
 		ios_base::sync_with_stdio(false);
 	 	cin.tie(NULL);
-	 	int l1,l2,r1,r2,t;
-	 	cin >> t;
-	 	while(t--){
-	 	cin >> l1 >> r1 >> l2>>r2;
-	 	if(l1 == l2)cout<<l1<<" "<<r2<<ln;
-	 	else cout<<l1<<" "<<l2<<ln;
-
-	 }
+	 	int x,y,z,a,b,c,tmp;
+	 	cin >> x >> y >> z;
+	 	cin >> a >> b >> c;
+	 	tmp = min(a,x);
+	 	a-=tmp,x-=tmp;
+	 	tmp= min(b,y);
+	 	y-=tmp;
+	 	b-=tmp;
+	 	tmp= min(a,y);
+	 	y-=tmp;
+	 	a-=tmp;
+	 	tmp= min(z,a);
+		z-=tmp;
+	 	a-=tmp;
+	 	tmp= min(z,b);
+		z-=tmp;
+	 	b-=tmp;
+	 	tmp= min(z,c);
+		z-=tmp;
+	 	c-=tmp;
+	 	// debug(x,y,z);
+	 	if(x>0 || y > 0 || z>0)cout<<"NO\n";
+	 	else cout<<"YES\n";
 		return 0;
 }
