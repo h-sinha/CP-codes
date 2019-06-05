@@ -40,39 +40,43 @@ typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_upda
 //X.order_of_key(A)
 
 const int L=1e6+7;
-int counter[L],n;
-std::vector<int> v,vv;
+int a[L], co[L];
 int main()
 {
 		ios_base::sync_with_stdio(false);
 	 	cin.tie(NULL);
-	 	int a;
-	 	cin>>n;
+	 	int n;
+	 	cin >> n;
+	 	FOR(i,0,n)
+	 		cin >> a[i];
+	 	sort(a,a+n);
+	 	vector<int> v;
 	 	FOR(i,0,n)
 	 	{
-	 		cin>>a;
-	 		vv.pb(a);
-	 	}
-	 	sort(all(vv));
-	 	v.pb(vv[0]);
-	 	FOR(i,1,sz(vv))
-	 	{
-	 		if(vv[i] == vv[i-1])continue;
-	 		v.pb(vv[i]);
-	 	}
-	 	int ans=0;
-	 	std::vector<int> ::iterator it;
-	 	FOR(i,0,sz(v))
-	 	{
-	 		if(v[i]==1)continue;
-	 		for (int j = v[i]*2; j <= v[sz(v)-1]+v[i]; j += v[i])
+	 		FOR(j,i+1,n)
 	 		{
-	 			it = lower_bound(all(v),j);
-	 			if(it == v.begin())break;
-	 			it--;
-	 			ans = max(ans , *it % v[i]);
+	 			v.pb(a[j]-a[i]);
 	 		}
 	 	}
-	 	cout<<ans;
+	 	sort(all(v));
+	 	std::vector<int> ::iterator it;
+	 	ld num = 0, deno = pow(sz(v),3);
+	 	FOR(i,0,sz(v))
+	 	{
+	 		FOR(j,i,sz(v))
+	 		{
+	 			it = upper_bound(all(v), v[i]+v[j]);
+	 			// if(v[i]+v[j]==4)
+	 			// debug(sz(v),i,j,v[i], v[j], sz(v) - (it-v.begin()));
+	 			// if(it == v.end())continue;
+	 			if(i==j)
+	 			num += (sz(v)- (it-v.begin()));
+	 			else
+	 			num += 2.0*(sz(v)- (it-v.begin()));
+
+	 		}
+	 	}
+	 	// debug(num,deno);
+	 	printf("%.10Lf\n",num/deno);
 		return 0;
 }

@@ -1,174 +1,146 @@
 #include<bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
 using namespace std;
+#define DEBUG
+#ifdef DEBUG
+#define debug(...) __f(#__VA_ARGS__, __VA_ARGS__)
+	template <typename Arg1>
+	void __f(const char* name, Arg1&& arg1){
+		cerr << name << " : " << arg1 << std::endl;
+	}
+	template <typename Arg1, typename... Args>
+	void __f(const char* names, Arg1&& arg1, Args&&... args){
+		const char* comma = strchr(names + 1, ','); cerr.write(names, comma - names) << " : " << arg1<<" | ";__f(comma+1, args...);
+	}
+#else
+#define debug(...)
+#endif
 #define FOR(i,a,b) 	for(int i=a;i<b;++i)
 #define RFOR(i,a,b) 	for(int i=a;i>=b;--i)
 #define ln 		"\n"
 #define mp make_pair
 #define pb push_back
-#define pii pair<ll,ll>
 #define sz(a)	ll(a.size())
-#define debug1(x) cout<<x<<endl
-#define debug2(x,y) cout<<x<<"-->"<<y<<endl
-#define debug3(x,y,z,w) cout<<x<<"-->"<<y<<"-->"<<z<<"-->"<<w<<endl
+#define F first
+#define S second
+#define all(c)	c.begin(),c.end()
+#define trace(c,x) for(auto &x:c)
+#define pii pair<ll,ll>
 typedef long long ll;
 typedef long double ld;
-map<ll,ll> counter;
-struct node{
-	int flag,x,y,five,two;
-};
-node dp[1002][1002],arr[1002][1002];
-int inp[1002][1002],n,dp1[1002][1002];
-node aux;
-node solve(int i,int j)
-{
-	if(i<1||i>n||j<0||j>n)return aux;
-	// if(dp[i][j].flag==1)return dp[i][j];
-	if(i==n && j==n)
-	{
-		node temp;
-		temp.five=arr[i][j].five;
-		temp.two=arr[i][j].two;
-		temp.x=n,temp.y=n;
-		temp.flag=1;
-		dp[i][j]=temp;
-		return dp[i][j];
-	}
-	node q1=solve(i+1,j);
-	node q2=solve(i,j+1);
-	ll temp=0;
-	q1.two+=arr[i][j].two;
-	q1.five+=arr[i][j].five;
-	q2.two+=arr[i][j].two;
-	q2.five+=arr[i][j].five;
-	// cout<<i<<" "<<j<<" "<<q1.five<<" "<<q1.two<<" "<<q2.five<<" "<<q2.two<<endl;
-	if(min(q1.five,q1.two)>min(q2.five,q2.two) && min(dp[i][j].five,dp[i][j].two)>min(q2.five,q2.two))
-	{
-		q2.flag=1;
-		q2.x=i;
-		q2.y=j+1;
-		dp[i][j]=q2;
-		return dp[i][j];
-	}
-	else if(min(q1.five,q1.two)<min(q2.five,q2.two) && min(dp[i][j].five,dp[i][j].two)>min(q1.five,q1.two))
-	{
-		q1.flag=1;
-		q1.x=i+1;
-		q1.y=j;	
-		dp[i][j]=q1;
-		return dp[i][j];
-	}
-	else if(min(q1.five,q1.two)==min(q2.five,q2.two) && min(dp[i][j].five,dp[i][j].two)>min(q1.five,q1.two))
-	{
-		q1.flag=1;
-		q1.x=i+1;
-		q1.y=j;	
-		q2.flag=1;
-		q2.x=i+1;
-		q2.y=j;	
-		if(q2.five>q1.five || q2.two>q1.two)
-		dp[i][j]=q2;
-		else dp[i][j]=q1;
-		return dp[i][j];
-	}
-	// cout<<i<<" "<<j<<" "<<dp[i][j].five<<endl;
-	return dp[i][j];
+typedef	priority_queue<pii,std::vector<pii>,greater<pii> > revpr;
 
-}
-node mini(int i,int j)
+typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_update> pbds;
+// ordered_set X
+//K-th smallest
+//*X.find_by_order(k-1)
+//NO OF ELEMENTS < A
+//X.order_of_key(A)
+
+const int L=1e3+7;
+int a[L][L], f[L][L], t[L][L], n, z, x, y;
+void init()
 {
-	if(i<1||i>n||j<0||j>n)return aux;
-	if(i==n && j==n)
+	int co2, co5, tmp;
+	FOR(i,1,n+1)
 	{
-		node temp;
-		temp.five=inp[i][j];
-		temp.two=arr[i][j].two;
-		temp.x=n,temp.y=n;
-		temp.flag=1;
-		dp[i][j]=temp;
-		return dp[i][j];
+		FOR(j,1,n+1)
+		{
+			co2 = 0, co5 = 0;
+			if(a[i][j] == 0)
+			{
+				z = 1;
+				x = i, y = j;
+			}
+			else
+			{
+				tmp = a[i][j];
+				while(tmp%2==0)co2++, tmp/=2;
+				while(tmp%5==0)co5++, tmp/=5;
+			}
+			if(i-1>=1 && j-1>=1)
+			{
+				t[i][j] = min(t[i-1][j] , t[i][j-1]) + co2;
+				f[i][j] = min(f[i-1][j] , f[i][j-1]) + co5;
+			}
+			else if(i-1>=1)
+			{
+				t[i][j] = t[i-1][j] + co2;
+				f[i][j] = f[i-1][j] + co5;
+			}
+			else if(j-1>=1)
+			{
+				t[i][j] = t[i][j-1] + co2;
+				f[i][j] = f[i][j-1] + co5;
+			}
+			else
+			{
+				t[i][j] = co2;
+				f[i][j] = co5;
+			}
+		}
 	}
-	if(dp[i][j].flag==1)return dp[i][j];
-	node q1,q2;
-	// dp[i][j].five=min(mini(i+1,j),mini(i,j+1))+inp[i][j];
-	q1=mini(i+1,j);
-	q2=mini(i,j+1);
-	if(q1.five<q2.five)
+}
+void movet(int i, int j)
+{
+	if(i==1 && j==1)return;
+	if(t[i-1][j]<t[i][j-1])
 	{
-		q1.flag=1;
-		q1.x=i+1;
-		q1.y=j;
-		dp[i][j]=q1;
+		movet(i-1,j);
+		cout<<"D";
 	}
 	else
 	{
-		q2.flag=1;
-		q2.x=i;
-		q2.y=j+1;
-		dp[i][j]=q2;
+		movet(i,j-1);
+		cout<<"R";
 	}
-	return dp[i][j];	
+}
+void movef(int i, int j)
+{
+	if(i==1 && j==1)return;
+	if(f[i-1][j]<f[i][j-1])
+	{
+		movef(i-1,j);
+		cout<<"D";
+	}
+	else
+	{
+		movef(i,j-1);
+		cout<<"R";
+	}
 }
 int main()
 {
 		ios_base::sync_with_stdio(false);
-	 	int co=0,temp;
 	 	cin.tie(NULL);
-	 	cin>>n;
-	 	aux.five=1e6;
-	 	aux.two=1e6;
-
-	 	FOR(i,1,1002)
-	 	{
-	 		FOR(j,0,1002)
-	 		{
-	 			dp[i][j].x=i;
-	 			dp[i][j].y=j;
-	 			dp[i][j].five=1e6;
-	 			dp[i][j].two=1e6;
-	 			dp[i][j].flag=0;
-	 		}
-	 	}
-	 	FOR(i,1,n+1)FOR(j,1,n+1)cin>>inp[i][j];
+	 	cin >> n;
 	 	FOR(i,1,n+1)
-	 	{
 	 		FOR(j,1,n+1)
-	 		{
-	 			temp=inp[i][j],co=0;
-	 			while(temp%5==0 && temp>0){co++;temp/=5;}
-	 			arr[i][j].five=co;co=0,temp=inp[i][j];
-	 			while(temp%2==0 && temp>0){co++;temp/=2;}
-	 			arr[i][j].two=co;co=0,temp=inp[i][j];
-	 			// cout<<inp[i][j]<<" "<<arr[i][j].five<<" "<<arr[i][j].two<<ln;
-	 		}
-	 	}
-	 	solve(1,1);
-	 	// cout<<"ba"<<endl;
-	 	FOR(i,1,n+1)FOR(j,1,n+1){inp[i][j]=min(dp[i][j].two,dp[i][j].five);cout<<i<<" "<<j<<" "<<inp[i][j]<<endl;}
-	 	// FOR(i,1,n+1)FOR(j,1,n+1)cout<<i<<" "<<j<<" "<<dp[i][j].five<<endl;
-	 	FOR(i,1,1002)
+	 			cin >> a[i][j];
+	 	init();
+	 	int ans = min(f[n][n], t[n][n]);
+	 	FOR(i,0,n+2)f[0][i] = t[0][i] = INT_MAX;
+	 	FOR(i,0,n+2)f[n+1][i] = t[n+1][i] = INT_MAX;
+	 	FOR(i,0,n+2)f[i][0] = t[i][0] = INT_MAX;
+	 	FOR(i,0,n+2)f[i][n+1] = t[i][n+1] = INT_MAX;
+	 	if(z)
 	 	{
-	 		FOR(j,0,1002)
+	 		ans = min(1, ans);
+	 		if(ans == 1)
 	 		{
-	 			dp[i][j].x=i;
-	 			dp[i][j].y=j;
-	 			dp[i][j].five=1e6;
-	 			dp[i][j].two=1e6;
-	 			dp[i][j].flag=0;
+	 			cout<<1<<ln;
+	 			int i = 1, j = 1;
+	 			while(i!=x){cout<<"D";i++;}
+	 			while(j!=y){cout<<"R";j++;}
+	 			while(x!=n){cout<<"D";x++;}
+	 			while(y!=n){cout<<"R";y++;}
+	 			return 0;
 	 		}
 	 	}
-	 	mini(1,1);
-	 	cout<<inp[1][1]<<ln;
-	 	int i=1,j=1,auxi,auxj;
-	 // 	while(1)
-		// {
-		// 	if(dp[i][j].x>i)cout<<"D";
-		// 	else cout<<"R";
-		// 	auxi=i,auxj=j;
-		// 	i=dp[i][j].x;
-		// 	j=dp[auxi][auxj].y;
-		// 	if(i==n && j==n)break;
-		// }
-	 	// debug2(dp[1][1].two,dp[1][1].five);
-		// cout<<n<<" "<<n;
+	 	cout<<ans<<ln;
+	 	if(ans == t[n][n])movet(n,n);
+	 	else movef(n,n);
 		return 0;
 }

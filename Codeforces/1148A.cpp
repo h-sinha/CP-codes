@@ -40,39 +40,29 @@ typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_upda
 //X.order_of_key(A)
 
 const int L=1e6+7;
-int counter[L],n;
-std::vector<int> v,vv;
+map<ll,ll> counter;
+ll fastexpo(ll x,ll y,ll m)
+{
+	ll temp=1;
+	while(y>0)
+	{
+		if(y&1)temp = ((temp%m)*(x%m))%m;
+		x = ((x%m)*(x%m))%m;
+		y>>=1;
+	}return temp;
+}
 int main()
 {
 		ios_base::sync_with_stdio(false);
 	 	cin.tie(NULL);
-	 	int a;
-	 	cin>>n;
-	 	FOR(i,0,n)
-	 	{
-	 		cin>>a;
-	 		vv.pb(a);
-	 	}
-	 	sort(all(vv));
-	 	v.pb(vv[0]);
-	 	FOR(i,1,sz(vv))
-	 	{
-	 		if(vv[i] == vv[i-1])continue;
-	 		v.pb(vv[i]);
-	 	}
-	 	int ans=0;
-	 	std::vector<int> ::iterator it;
-	 	FOR(i,0,sz(v))
-	 	{
-	 		if(v[i]==1)continue;
-	 		for (int j = v[i]*2; j <= v[sz(v)-1]+v[i]; j += v[i])
-	 		{
-	 			it = lower_bound(all(v),j);
-	 			if(it == v.begin())break;
-	 			it--;
-	 			ans = max(ans , *it % v[i]);
-	 		}
-	 	}
-	 	cout<<ans;
+	 	ll a,b,c;
+	 	cin >> a >> b >> c;
+	 	ll tmp = min(a,b);
+	 	c+=tmp;
+	 	a-=tmp;
+	 	b-=tmp;
+	 	ll ans = 2*c;
+	 	if(a>0 || b > 0)cout<<ans+1;
+	 	else cout<<ans;
 		return 0;
 }

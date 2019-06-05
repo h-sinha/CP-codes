@@ -40,37 +40,31 @@ typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_upda
 //X.order_of_key(A)
 
 const int L=1e6+7;
-int counter[L],n;
-std::vector<int> v,vv;
+std::vector<pii> edge[L];
+int aux[L], dp[L];
 int main()
 {
 		ios_base::sync_with_stdio(false);
 	 	cin.tie(NULL);
-	 	int a;
-	 	cin>>n;
-	 	FOR(i,0,n)
+	 	int n, m, a, b, c;
+	 	cin >> n >> m;
+	 	FOR(i,0,m)
 	 	{
-	 		cin>>a;
-	 		vv.pb(a);
+	 		cin >> a >> b >> c;
+	 		edge[c].pb(mp(a,b));
 	 	}
-	 	sort(all(vv));
-	 	v.pb(vv[0]);
-	 	FOR(i,1,sz(vv))
+	 	int ans = 1;
+	 	FOR(i,1,100001)
 	 	{
-	 		if(vv[i] == vv[i-1])continue;
-	 		v.pb(vv[i]);
-	 	}
-	 	int ans=0;
-	 	std::vector<int> ::iterator it;
-	 	FOR(i,0,sz(v))
-	 	{
-	 		if(v[i]==1)continue;
-	 		for (int j = v[i]*2; j <= v[sz(v)-1]+v[i]; j += v[i])
+	 		trace(edge[i], x)
 	 		{
-	 			it = lower_bound(all(v),j);
-	 			if(it == v.begin())break;
-	 			it--;
-	 			ans = max(ans , *it % v[i]);
+	 			aux[x.S] = max(aux[x.S],dp[x.F] + 1);
+	 		}
+	 		trace(edge[i], x)
+	 		{
+	 			dp[x.S] = max(dp[x.S], aux[x.S]);
+	 			ans = max(ans, dp[x.S]);
+	 			aux[x.S] = 0;
 	 		}
 	 	}
 	 	cout<<ans;

@@ -39,40 +39,52 @@ typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_upda
 //NO OF ELEMENTS < A
 //X.order_of_key(A)
 
-const int L=1e6+7;
-int counter[L],n;
-std::vector<int> v,vv;
+const int L=502;
+ll a[L][L], x[L], dp[L][L];
 int main()
 {
 		ios_base::sync_with_stdio(false);
 	 	cin.tie(NULL);
-	 	int a;
-	 	cin>>n;
-	 	FOR(i,0,n)
-	 	{
-	 		cin>>a;
-	 		vv.pb(a);
-	 	}
-	 	sort(all(vv));
-	 	v.pb(vv[0]);
-	 	FOR(i,1,sz(vv))
-	 	{
-	 		if(vv[i] == vv[i-1])continue;
-	 		v.pb(vv[i]);
-	 	}
-	 	int ans=0;
-	 	std::vector<int> ::iterator it;
-	 	FOR(i,0,sz(v))
-	 	{
-	 		if(v[i]==1)continue;
-	 		for (int j = v[i]*2; j <= v[sz(v)-1]+v[i]; j += v[i])
-	 		{
-	 			it = lower_bound(all(v),j);
-	 			if(it == v.begin())break;
-	 			it--;
-	 			ans = max(ans , *it % v[i]);
-	 		}
-	 	}
-	 	cout<<ans;
+	 	int n;
+	 	cin >> n;
+	 	FOR(i,1,n+1)FOR(j,1,n+1)cin >> a[i][j];
+		FOR(i,0,n)cin >> x[i];
+		std::vector<ll> ans;
+		ll sofar = 0;
+		FOR(i,1,n+1)FOR(j,1,n+1)dp[i][j] = INT_MAX;
+		FOR(i,1,n+1)dp[i][i] = 0;
+		std::vector<int> prev;
+		int k;
+		RFOR(i,n-1,0)
+		{
+			k = x[i];
+			trace(prev, xx)
+			{
+				dp[k][xx] = a[k][xx];
+				dp[xx][k] = a[xx][k];
+			}
+			FOR(i,1,n+1)
+			{
+				FOR(j,1,n+1)
+				{
+					dp[i][k] = min(dp[i][k], dp[i][j]+dp[j][k]);
+					dp[k][i] = min(dp[k][i], dp[j][i]+dp[k][j]);
+				}
+			}
+			sofar = 0;
+			FOR(i,1,n+1)
+			{
+				FOR(j,1,n+1)
+				{
+					dp[i][j] = min(dp[i][j], dp[i][k]+dp[k][j]);
+					if(dp[i][j] != INT_MAX)
+					sofar += dp[i][j];
+				}
+			}
+			prev.pb(x[i]);
+			ans.pb(sofar);
+		}
+		reverse(all(ans));
+		trace(ans,x)cout<<x<< " ";
 		return 0;
 }

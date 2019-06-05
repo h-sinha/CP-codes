@@ -39,40 +39,51 @@ typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_upda
 //NO OF ELEMENTS < A
 //X.order_of_key(A)
 
-const int L=1e6+7;
-int counter[L],n;
-std::vector<int> v,vv;
+const int L=2002;
+map<ll,ll> counter;
+ld C[L][L];
+void pre()
+{
+	C[0][0] = 1;
+	FOR(i,1,2001)C[0][i] = 0;
+	FOR(i,1,2001)
+	{
+		C[i][0] = 1;
+		FOR(j,1,i+1)
+		{
+			C[i][j] = C[i-1][j] + C[i-1][j-1];
+		}
+	}
+}
 int main()
 {
 		ios_base::sync_with_stdio(false);
 	 	cin.tie(NULL);
-	 	int a;
-	 	cin>>n;
-	 	FOR(i,0,n)
+	 	pre();
+	 	ld p, ans = 0;
+	 	int n, t;
+	 	cin >> n >> p >> t;
+	 	if(p == 1)
 	 	{
-	 		cin>>a;
-	 		vv.pb(a);
+	 		cout<<min(n,t);
+	 		return 0;
 	 	}
-	 	sort(all(vv));
-	 	v.pb(vv[0]);
-	 	FOR(i,1,sz(vv))
+	 	if(1-p == 1)
 	 	{
-	 		if(vv[i] == vv[i-1])continue;
-	 		v.pb(vv[i]);
+	 		cout<<0;
+	 		return 0;
 	 	}
-	 	int ans=0;
-	 	std::vector<int> ::iterator it;
-	 	FOR(i,0,sz(v))
+	 	FOR(i,1,min(t,n))
+	 		ans += (ld(i) * C[t][i] * pow(p, i) * pow(1-p, t-i));
+	 	if(t>=n)
 	 	{
-	 		if(v[i]==1)continue;
-	 		for (int j = v[i]*2; j <= v[sz(v)-1]+v[i]; j += v[i])
+	 		FOR(i,n,t+1)
 	 		{
-	 			it = lower_bound(all(v),j);
-	 			if(it == v.begin())break;
-	 			it--;
-	 			ans = max(ans , *it % v[i]);
+	 			ans += (ld(n) * C[i-1][n-1] * pow(p, n) * pow(1-p, i-n));
 	 		}
 	 	}
-	 	cout<<ans;
+	 	else
+	 		ans += (ld(t) * C[t][t] * pow(p, t));
+	 	printf("%.10Lf\n",ans);
 		return 0;
 }

@@ -39,40 +39,84 @@ typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_upda
 //NO OF ELEMENTS < A
 //X.order_of_key(A)
 
-const int L=1e6+7;
-int counter[L],n;
-std::vector<int> v,vv;
+const int L=2e5+7;
+std::vector<int> v[L];
+int a[L], nxt[L], prv[L];
 int main()
 {
 		ios_base::sync_with_stdio(false);
 	 	cin.tie(NULL);
-	 	int a;
-	 	cin>>n;
-	 	FOR(i,0,n)
-	 	{
-	 		cin>>a;
-	 		vv.pb(a);
-	 	}
-	 	sort(all(vv));
-	 	v.pb(vv[0]);
-	 	FOR(i,1,sz(vv))
-	 	{
-	 		if(vv[i] == vv[i-1])continue;
-	 		v.pb(vv[i]);
-	 	}
-	 	int ans=0;
-	 	std::vector<int> ::iterator it;
-	 	FOR(i,0,sz(v))
-	 	{
-	 		if(v[i]==1)continue;
-	 		for (int j = v[i]*2; j <= v[sz(v)-1]+v[i]; j += v[i])
-	 		{
-	 			it = lower_bound(all(v),j);
-	 			if(it == v.begin())break;
-	 			it--;
-	 			ans = max(ans , *it % v[i]);
-	 		}
-	 	}
-	 	cout<<ans;
+	 	int n;
+	 	cin >> n;
+	 	FOR(i,0,n)cin >> a[i];
+	 	stack<int>num;
+	 	stack<int>pos;
+	 	multiset<int>SET;
+		RFOR(i,n-1,0)
+		{
+			SET.insert(a[i]);
+			if(num.empty())
+			{
+				num.push(a[i]);
+				pos.push(i);
+				nxt[i] = n;
+				continue;
+			}
+			while(!num.empty() && num.top() >= a[i])
+			{
+				num.pop();
+				pos.pop();
+			}
+			if(num.empty())
+			{
+				num.push(a[i]);
+				pos.push(i);
+				nxt[i] = n;
+			}
+			else
+			{
+				nxt[i] = pos.top();
+				num.push(a[i]);
+				pos.push(i);
+			}
+		}
+		while(!num.empty())
+		{
+			num.pop();
+			pos.pop();
+		}
+		FOR(i,0,n)
+		{
+			if(num.empty())
+			{
+				num.push(a[i]);
+				pos.push(i);
+				prv[i] = -1;
+				continue;
+			}
+			while(!num.empty() && num.top() >= a[i])
+			{
+				num.pop();
+				pos.pop();
+			}
+			if(num.empty())
+			{
+				num.push(a[i]);
+				pos.push(i);
+				prv[i] = -1;
+			}
+			else
+			{
+				prv[i] = pos.top();
+				num.push(a[i]);
+				pos.push(i);
+			}
+		}
+		FOR(i,0,n)v[nxt[i] - prv[i] - 1].pb(a[i]);
+		FOR(i,1,n+1)
+		{
+			cout<<*SET.rbegin()<<" ";
+			trace(v[i],x)SET.erase(SET.find(x));
+		}
 		return 0;
 }

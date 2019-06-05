@@ -40,39 +40,44 @@ typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_upda
 //X.order_of_key(A)
 
 const int L=1e6+7;
-int counter[L],n;
-std::vector<int> v,vv;
+int a[L];
 int main()
 {
 		ios_base::sync_with_stdio(false);
 	 	cin.tie(NULL);
-	 	int a;
-	 	cin>>n;
-	 	FOR(i,0,n)
-	 	{
-	 		cin>>a;
-	 		vv.pb(a);
-	 	}
-	 	sort(all(vv));
-	 	v.pb(vv[0]);
-	 	FOR(i,1,sz(vv))
-	 	{
-	 		if(vv[i] == vv[i-1])continue;
-	 		v.pb(vv[i]);
-	 	}
-	 	int ans=0;
-	 	std::vector<int> ::iterator it;
-	 	FOR(i,0,sz(v))
-	 	{
-	 		if(v[i]==1)continue;
-	 		for (int j = v[i]*2; j <= v[sz(v)-1]+v[i]; j += v[i])
-	 		{
-	 			it = lower_bound(all(v),j);
-	 			if(it == v.begin())break;
-	 			it--;
-	 			ans = max(ans , *it % v[i]);
-	 		}
-	 	}
-	 	cout<<ans;
+		int n, sumis = 0;
+		cin >> n;
+		FOR(i,1,n+1)
+		{
+			cin >> a[i];
+			sumis += a[i];
+		}	 	
+		int tmp = sqrt(n);
+		int ans = sumis, tot;
+		// debug(sumis);
+		FOR(i,2,tmp+1)
+		{
+			if(n%i==0)
+			{
+				for (int j = 1; j < 1+i; ++j)
+				{
+					tot = (n-j)/i;
+					if(tot<3)break;
+					debug(i,j,tot,((tot+1)*(j+i+tot*j))/2);
+					ans = max(ans, ((tot+1)*(j+i+tot*j))/2);
+				}
+				if(n/i <n/2 && n/i != i)
+				{
+					for (int j = 1; j < 1+i; ++j)
+					{
+						tot = (n-j)/(n/i);
+						if(tot<3)break;
+						debug( ((tot+1)*(j+(n/i)+tot*j))/2);
+						ans = max(ans, ((tot+1)*(j+(n/i)+tot*j))/2);
+					}
+				}
+			}
+		}
+		cout<<ans;
 		return 0;
 }

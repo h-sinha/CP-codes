@@ -40,39 +40,22 @@ typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_upda
 //X.order_of_key(A)
 
 const int L=1e6+7;
-int counter[L],n;
-std::vector<int> v,vv;
+map<ll,ll> counter;
 int main()
 {
 		ios_base::sync_with_stdio(false);
 	 	cin.tie(NULL);
-	 	int a;
-	 	cin>>n;
-	 	FOR(i,0,n)
+	 	ld n, m;
+	 	cin >> m >> n;
+	 	ld cur = 0;
+	 	ld ans = 0, prev = 1.0, cur_pow;
+	 	for (ld i = m; i >= 1.0; i-=1.0)
 	 	{
-	 		cin>>a;
-	 		vv.pb(a);
+	 		cur_pow = pow((1 - (cur+1)/m), n);
+	 		ans = ans + i*(prev -cur_pow);
+	 		prev = cur_pow;
+	 		cur++;
 	 	}
-	 	sort(all(vv));
-	 	v.pb(vv[0]);
-	 	FOR(i,1,sz(vv))
-	 	{
-	 		if(vv[i] == vv[i-1])continue;
-	 		v.pb(vv[i]);
-	 	}
-	 	int ans=0;
-	 	std::vector<int> ::iterator it;
-	 	FOR(i,0,sz(v))
-	 	{
-	 		if(v[i]==1)continue;
-	 		for (int j = v[i]*2; j <= v[sz(v)-1]+v[i]; j += v[i])
-	 		{
-	 			it = lower_bound(all(v),j);
-	 			if(it == v.begin())break;
-	 			it--;
-	 			ans = max(ans , *it % v[i]);
-	 		}
-	 	}
-	 	cout<<ans;
+	 	printf("%.30Lf\n",ans);
 		return 0;
 }

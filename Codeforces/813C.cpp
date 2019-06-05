@@ -40,38 +40,37 @@ typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_upda
 //X.order_of_key(A)
 
 const int L=1e6+7;
-int counter[L],n;
-std::vector<int> v,vv;
+std::vector<int> v[L];
+int n, x, depth[L][2], subtree[L];
+void dfs(int cur, int vertex = 1, int parent = -1, int _depth = 0)
+{
+	depth[vertex][cur] = _depth;
+	trace(v[vertex], x)
+	{
+		if(x != parent)
+			dfs(cur, x, vertex, _depth + 1);
+	}
+	return;
+}
 int main()
 {
 		ios_base::sync_with_stdio(false);
 	 	cin.tie(NULL);
-	 	int a;
-	 	cin>>n;
-	 	FOR(i,0,n)
+	 	int a, b;
+	 	cin >> n >> x;
+	 	FOR(i,0,n-1)
 	 	{
-	 		cin>>a;
-	 		vv.pb(a);
+	 		cin >> a >> b;
+	 		v[a].pb(b);
+	 		v[b].pb(a);
 	 	}
-	 	sort(all(vv));
-	 	v.pb(vv[0]);
-	 	FOR(i,1,sz(vv))
+	 	dfs(1);
+	 	dfs(0,x);
+	 	int ans = 0;
+	 	FOR(i,1,n+1)
 	 	{
-	 		if(vv[i] == vv[i-1])continue;
-	 		v.pb(vv[i]);
-	 	}
-	 	int ans=0;
-	 	std::vector<int> ::iterator it;
-	 	FOR(i,0,sz(v))
-	 	{
-	 		if(v[i]==1)continue;
-	 		for (int j = v[i]*2; j <= v[sz(v)-1]+v[i]; j += v[i])
-	 		{
-	 			it = lower_bound(all(v),j);
-	 			if(it == v.begin())break;
-	 			it--;
-	 			ans = max(ans , *it % v[i]);
-	 		}
+	 		if(depth[i][0] < depth[i][1])
+	 			ans = max(ans, 2*depth[i][1]);
 	 	}
 	 	cout<<ans;
 		return 0;

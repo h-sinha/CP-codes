@@ -40,39 +40,32 @@ typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_upda
 //X.order_of_key(A)
 
 const int L=1e6+7;
-int counter[L],n;
-std::vector<int> v,vv;
+ld prob[L];
 int main()
 {
 		ios_base::sync_with_stdio(false);
 	 	cin.tie(NULL);
-	 	int a;
-	 	cin>>n;
+	 	ll n, l, r, p;
+	 	ld ans = 0, tot, fav;
+	 	cin >> n >> p;
 	 	FOR(i,0,n)
 	 	{
-	 		cin>>a;
-	 		vv.pb(a);
+	 		cin >> l >> r;
+	 		tot = (r - l + 1);
+			fav = (r/p - (l-1)/p); 
+	 		prob[i] = fav/tot;
 	 	}
-	 	sort(all(vv));
-	 	v.pb(vv[0]);
-	 	FOR(i,1,sz(vv))
+	 	FOR(i,0,n)
 	 	{
-	 		if(vv[i] == vv[i-1])continue;
-	 		v.pb(vv[i]);
+	 		ans += (1000.0 * ((1-prob[i]) * prob[(i+1)%n] * (1-prob[(i-1+n)%n])) +
+	 				1000.0 * ((1-prob[i]) * (1-prob[(i+1)%n]) * prob[(i-1+n)%n]) +
+	 				2000.0 * (prob[i] * (1-prob[(i+1)%n]) *(1-prob[(i-1+n)%n]))	 +
+	 				2000.0 * ((1-prob[i]) * prob[(i+1)%n] * prob[(i-1+n)%n])	+
+	 				2000.0 * (prob[i] * (1-prob[(i+1)%n]) * prob[(i-1+n)%n])	+
+	 				2000.0 * (prob[i] * prob[(i+1)%n] * (1-prob[(i-1+n)%n]))	+
+	 				2000.0 * (prob[i] * prob[(i+1)%n] * prob[(i-1+n)%n])	
+	 			);
 	 	}
-	 	int ans=0;
-	 	std::vector<int> ::iterator it;
-	 	FOR(i,0,sz(v))
-	 	{
-	 		if(v[i]==1)continue;
-	 		for (int j = v[i]*2; j <= v[sz(v)-1]+v[i]; j += v[i])
-	 		{
-	 			it = lower_bound(all(v),j);
-	 			if(it == v.begin())break;
-	 			it--;
-	 			ans = max(ans , *it % v[i]);
-	 		}
-	 	}
-	 	cout<<ans;
+	 	printf("%.10Lf\n", ans);
 		return 0;
 }

@@ -17,8 +17,8 @@ using namespace std;
 #else
 #define debug(...)
 #endif
-#define FOR(i,a,b) 	for(int i=a;i<b;++i)
-#define RFOR(i,a,b) 	for(int i=a;i>=b;--i)
+#define FOR(i,a,b) 	for(ll i=a;i<b;++i)
+#define RFOR(i,a,b) 	for(ll i=a;i>=b;--i)
 #define ln 		"\n"
 #define mp make_pair
 #define pb push_back
@@ -32,46 +32,61 @@ typedef long long ll;
 typedef long double ld;
 typedef	priority_queue<pii,std::vector<pii>,greater<pii> > revpr;
 
-typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_update> pbds;
+typedef tree<ll,null_type,less<ll>,rb_tree_tag,tree_order_statistics_node_update> pbds;
 // ordered_set X
 //K-th smallest
 //*X.find_by_order(k-1)
 //NO OF ELEMENTS < A
 //X.order_of_key(A)
 
-const int L=1e6+7;
-int counter[L],n;
-std::vector<int> v,vv;
+const int L=20;
+int n, m, k;
+ll a[L];
+std::map<pii, ll> counter;
+ll solve(ll i, ll sofar, ll done[20])
+{
+	if(i>n || i<1 || sofar >m)return 0;
+	if(sofar == m)return a[i];
+	done[i] = 1;
+	ll tmp = 0, ret = 0;;
+	FOR(j,1,n+1)
+	{
+		if(i==2 && j==7)debug(i,j,done[j]);
+		// debug(j,done[j]);
+		if(done[j])continue;
+		if(counter.find(mp(i,j)) != counter.end())
+		{
+			tmp = counter[{i,j}];
+		}
+		else tmp = 0;
+		if(i==2 && j == 7)
+		debug(i,j,tmp);
+		// debug(i,j,tmp,a[i],solve(j,sofar+1,done));
+		ret = max(ret, solve(j,sofar+1,done) + a[i] + tmp);
+	}
+	done[i] = 0;
+	// debug(i,ret);
+	return ret;
+}
 int main()
 {
 		ios_base::sync_with_stdio(false);
 	 	cin.tie(NULL);
-	 	int a;
-	 	cin>>n;
-	 	FOR(i,0,n)
+	 	cin >> n >> m >> k;
+	 	ll x,y,c;
+	 	FOR(i,1,n+1)
+	 		cin >> a[i];
+	 	FOR(i,0,k)
 	 	{
-	 		cin>>a;
-	 		vv.pb(a);
+	 		cin >> x >> y >> c;
+	 		counter[mp(x,y)] = c;
 	 	}
-	 	sort(all(vv));
-	 	v.pb(vv[0]);
-	 	FOR(i,1,sz(vv))
+	 	ll done[20], ans = 0;
+	 	FOR(i,2,3)
 	 	{
-	 		if(vv[i] == vv[i-1])continue;
-	 		v.pb(vv[i]);
-	 	}
-	 	int ans=0;
-	 	std::vector<int> ::iterator it;
-	 	FOR(i,0,sz(v))
-	 	{
-	 		if(v[i]==1)continue;
-	 		for (int j = v[i]*2; j <= v[sz(v)-1]+v[i]; j += v[i])
-	 		{
-	 			it = lower_bound(all(v),j);
-	 			if(it == v.begin())break;
-	 			it--;
-	 			ans = max(ans , *it % v[i]);
-	 		}
+	 		FOR(j,1,n+1)done[j] = 0;
+	 		ans = max(ans, solve(i, 1, done));
+	 		// cout<<ln;
 	 	}
 	 	cout<<ans;
 		return 0;

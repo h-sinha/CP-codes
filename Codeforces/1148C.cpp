@@ -40,39 +40,68 @@ typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_upda
 //X.order_of_key(A)
 
 const int L=1e6+7;
-int counter[L],n;
-std::vector<int> v,vv;
+map<ll,ll> counter;
+int pos[L], a[L];
+std::vector<pii> ans;
+void cswap(int i, int j)
+{
+	int tmp1, tmp2;
+	ans.pb(mp(i,j));
+	tmp1 = a[i];
+	tmp2 = a[j];
+	a[j] = tmp1;
+	a[i] = tmp2;
+	pos[tmp1] = j;
+	pos[tmp2] = i;
+	return;
+}
 int main()
 {
 		ios_base::sync_with_stdio(false);
 	 	cin.tie(NULL);
-	 	int a;
-	 	cin>>n;
-	 	FOR(i,0,n)
+	 	int n, tmp;
+	 	cin >> n;
+	 	FOR(i,1,n+1)
 	 	{
-	 		cin>>a;
-	 		vv.pb(a);
+	 		cin >> a[i];
+	 		pos[a[i]] = i;
 	 	}
-	 	sort(all(vv));
-	 	v.pb(vv[0]);
-	 	FOR(i,1,sz(vv))
+	 	FOR(i,1,n+1)
 	 	{
-	 		if(vv[i] == vv[i-1])continue;
-	 		v.pb(vv[i]);
-	 	}
-	 	int ans=0;
-	 	std::vector<int> ::iterator it;
-	 	FOR(i,0,sz(v))
-	 	{
-	 		if(v[i]==1)continue;
-	 		for (int j = v[i]*2; j <= v[sz(v)-1]+v[i]; j += v[i])
+	 		if(a[i] == i)continue;
+	 		if((pos[i] - i)*2 < n)
 	 		{
-	 			it = lower_bound(all(v),j);
-	 			if(it == v.begin())break;
-	 			it--;
-	 			ans = max(ans , *it % v[i]);
+	 			if(i<=n/2 && pos[i] <= n/2)
+	 			{
+	 				cswap(i,n);
+	 				cswap(pos[i],n);
+	 				cswap(i,n);
+	 			}
+	 			else if(i<=n/2 && pos[i]>n/2)
+	 			{
+	 				tmp = pos[i];
+	 				cswap(pos[i],1);
+	 				cswap(i,n);
+	 				cswap(1,n);
+	 				cswap(1,tmp);
+	 				cswap(i,n);
+	 			}
+	 			else if(i>n/2 && pos[i]>n/2)
+	 			{
+	 				tmp = pos[i];
+	 				cswap(1,pos[i]);
+	 				cswap(1,i);
+	 				cswap(1, tmp);
+	 			}
+	 		}
+	 		else
+	 		{
+	 			cswap(i, pos[i]);
 	 		}
 	 	}
-	 	cout<<ans;
+	 	
+
+	 	cout<<sz(ans)<<ln;
+	 	trace(ans,x)cout<<x.F<<" "<<x.S<<ln;
 		return 0;
 }

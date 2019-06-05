@@ -39,40 +39,28 @@ typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_upda
 //NO OF ELEMENTS < A
 //X.order_of_key(A)
 
-const int L=1e6+7;
-int counter[L],n;
-std::vector<int> v,vv;
+const int L=502;
+int n, m , b, mod, a[L];
+int dp[L][2*L];
 int main()
 {
 		ios_base::sync_with_stdio(false);
 	 	cin.tie(NULL);
-	 	int a;
-	 	cin>>n;
+	 	cin >> n >> m >> b >> mod;
+	 	FOR(i,0,n)cin >> a[i];
+	 	dp[0][0] = 1;
 	 	FOR(i,0,n)
 	 	{
-	 		cin>>a;
-	 		vv.pb(a);
-	 	}
-	 	sort(all(vv));
-	 	v.pb(vv[0]);
-	 	FOR(i,1,sz(vv))
-	 	{
-	 		if(vv[i] == vv[i-1])continue;
-	 		v.pb(vv[i]);
-	 	}
-	 	int ans=0;
-	 	std::vector<int> ::iterator it;
-	 	FOR(i,0,sz(v))
-	 	{
-	 		if(v[i]==1)continue;
-	 		for (int j = v[i]*2; j <= v[sz(v)-1]+v[i]; j += v[i])
+	 		FOR(j,0,m)
 	 		{
-	 			it = lower_bound(all(v),j);
-	 			if(it == v.begin())break;
-	 			it--;
-	 			ans = max(ans , *it % v[i]);
+	 			FOR(k,0,b+1)
+	 			{
+	 				dp[j+1][k+a[i]] = (dp[j+1][k+a[i]] + dp[j][k])%mod;
+	 			}
 	 		}
 	 	}
+	 	int ans = 0;
+	 	FOR(i,0,b+1)ans = (ans + dp[m][i])%mod;
 	 	cout<<ans;
 		return 0;
 }

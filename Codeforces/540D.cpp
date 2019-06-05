@@ -39,40 +39,46 @@ typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_upda
 //NO OF ELEMENTS < A
 //X.order_of_key(A)
 
-const int L=1e6+7;
-int counter[L],n;
-std::vector<int> v,vv;
+const int L=102;
+ld dp[L][L][L];
 int main()
 {
 		ios_base::sync_with_stdio(false);
 	 	cin.tie(NULL);
-	 	int a;
-	 	cin>>n;
-	 	FOR(i,0,n)
+	 	int rr, ss, pp;
+	 	cin >> rr >> ss >> pp;
+	 	dp[rr][ss][pp] = 1.0;
+	 	// solve(rr, ss, pp);
+	 	RFOR(r,rr,0)
 	 	{
-	 		cin>>a;
-	 		vv.pb(a);
-	 	}
-	 	sort(all(vv));
-	 	v.pb(vv[0]);
-	 	FOR(i,1,sz(vv))
-	 	{
-	 		if(vv[i] == vv[i-1])continue;
-	 		v.pb(vv[i]);
-	 	}
-	 	int ans=0;
-	 	std::vector<int> ::iterator it;
-	 	FOR(i,0,sz(v))
-	 	{
-	 		if(v[i]==1)continue;
-	 		for (int j = v[i]*2; j <= v[sz(v)-1]+v[i]; j += v[i])
+	 		RFOR(s,ss,0)
 	 		{
-	 			it = lower_bound(all(v),j);
-	 			if(it == v.begin())break;
-	 			it--;
-	 			ans = max(ans , *it % v[i]);
+	 			RFOR(p,pp,0)
+	 			{
+	 				if(r == 0 && s == 0)continue;
+	 				if(r == 0 && p == 0)continue;
+	 				if(p == 0 && s == 0)continue;
+	 				ld tot = r*p + s*p + r*s;
+	 				if(r>0 && p>0)
+	 					dp[r-1][s][p] += (dp[r][s][p] * (ld(r*p)/tot));
+	 				if(r>0 && s>0)
+	 					dp[r][s-1][p] += (dp[r][s][p] * (ld(s*r)/tot));
+	 				if(s>0 && p>0)
+	 					dp[r][s][p-1] += (dp[r][s][p] * (ld(s*p)/tot));
+	 			}
 	 		}
 	 	}
-	 	cout<<ans;
+	 	ld sumis = 0;
+	 	FOR(i,1,rr+1)
+	 		sumis += dp[i][0][0];
+	 	printf("%.10Lf ",sumis);
+	 	sumis = 0;
+	 	FOR(i,1,ss+1)
+	 		sumis += dp[0][i][0];
+	 	printf("%.10Lf ",sumis);
+	 	sumis = 0;
+	 	FOR(i,1,pp+1)
+	 		sumis += dp[0][0][i];
+	 	printf("%.10Lf ",sumis);
 		return 0;
 }

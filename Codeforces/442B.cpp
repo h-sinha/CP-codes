@@ -39,40 +39,44 @@ typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_upda
 //NO OF ELEMENTS < A
 //X.order_of_key(A)
 
-const int L=1e6+7;
-int counter[L],n;
-std::vector<int> v,vv;
+const int L=102;
+ld p[L], np[L], ans;
+int n;
+void solve(int j)
+{
+	ld cur = 0;
+	RFOR(i,n-1, n-j)
+	{
+		cur += (p[i]*(np[n-j]/(1-p[i])));
+	}
+	ans = max(ans, cur);
+}
 int main()
 {
 		ios_base::sync_with_stdio(false);
 	 	cin.tie(NULL);
-	 	int a;
-	 	cin>>n;
+	 	int f=0;
+	 	cin >> n;
 	 	FOR(i,0,n)
 	 	{
-	 		cin>>a;
-	 		vv.pb(a);
-	 	}
-	 	sort(all(vv));
-	 	v.pb(vv[0]);
-	 	FOR(i,1,sz(vv))
-	 	{
-	 		if(vv[i] == vv[i-1])continue;
-	 		v.pb(vv[i]);
-	 	}
-	 	int ans=0;
-	 	std::vector<int> ::iterator it;
-	 	FOR(i,0,sz(v))
-	 	{
-	 		if(v[i]==1)continue;
-	 		for (int j = v[i]*2; j <= v[sz(v)-1]+v[i]; j += v[i])
+	 		cin >> p[i];
+	 		if(p[i] == 1)
 	 		{
-	 			it = lower_bound(all(v),j);
-	 			if(it == v.begin())break;
-	 			it--;
-	 			ans = max(ans , *it % v[i]);
+	 			f = 1;
 	 		}
 	 	}
-	 	cout<<ans;
+	 	if(f)
+	 	{
+	 		cout<<1;
+	 		return 0;
+	 	}
+		sort(p, p+n);
+		FOR(i,0,n)
+			np[i] = (1-p[i]);
+		RFOR(i,n-2,0)
+			np[i] *= np[i+1];
+		FOR(i,1,n+1)
+			solve(i);
+		printf("%.10Lf\n",ans);
 		return 0;
 }

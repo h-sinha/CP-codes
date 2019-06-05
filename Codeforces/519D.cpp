@@ -17,8 +17,8 @@ using namespace std;
 #else
 #define debug(...)
 #endif
-#define FOR(i,a,b) 	for(int i=a;i<b;++i)
-#define RFOR(i,a,b) 	for(int i=a;i>=b;--i)
+#define FOR(i,a,b) 	for(ll i=a;i<b;++i)
+#define RFOR(i,a,b) 	for(ll i=a;i>=b;--i)
 #define ln 		"\n"
 #define mp make_pair
 #define pb push_back
@@ -32,47 +32,37 @@ typedef long long ll;
 typedef long double ld;
 typedef	priority_queue<pii,std::vector<pii>,greater<pii> > revpr;
 
-typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_update> pbds;
+typedef tree<ll,null_type,less<ll>,rb_tree_tag,tree_order_statistics_node_update> pbds;
 // ordered_set X
 //K-th smallest
 //*X.find_by_order(k-1)
 //NO OF ELEMENTS < A
 //X.order_of_key(A)
 
-const int L=1e6+7;
-int counter[L],n;
-std::vector<int> v,vv;
+const ll L=1e6+7;
+ll x[30], dp[L];
+std::map<pii, ll> co;
 int main()
 {
 		ios_base::sync_with_stdio(false);
 	 	cin.tie(NULL);
-	 	int a;
-	 	cin>>n;
-	 	FOR(i,0,n)
-	 	{
-	 		cin>>a;
-	 		vv.pb(a);
-	 	}
-	 	sort(all(vv));
-	 	v.pb(vv[0]);
-	 	FOR(i,1,sz(vv))
-	 	{
-	 		if(vv[i] == vv[i-1])continue;
-	 		v.pb(vv[i]);
-	 	}
-	 	int ans=0;
-	 	std::vector<int> ::iterator it;
-	 	FOR(i,0,sz(v))
-	 	{
-	 		if(v[i]==1)continue;
-	 		for (int j = v[i]*2; j <= v[sz(v)-1]+v[i]; j += v[i])
-	 		{
-	 			it = lower_bound(all(v),j);
-	 			if(it == v.begin())break;
-	 			it--;
-	 			ans = max(ans , *it % v[i]);
-	 		}
-	 	}
-	 	cout<<ans;
+		FOR(i,0,26)cin >> x[i];
+		string s;
+		cin >> s;
+		ll n = s.length();
+		FOR(i,0,n)
+			dp[i] = x[s[i]-'a'];
+		FOR(i,1,n)
+			dp[i] += dp[i-1];
+		FOR(i,0,n)
+			co[mp(dp[i],s[i]-'a')]++;
+		ll tmp, ans = 0;
+		FOR(i,0,n)
+		{
+			tmp = s[i] - 'a';
+			co[mp(dp[i],tmp)]--;
+			ans += co[mp(dp[i]+x[tmp], tmp)];
+		}
+		cout<<ans;
 		return 0;
 }

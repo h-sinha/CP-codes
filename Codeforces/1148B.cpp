@@ -40,39 +40,43 @@ typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_upda
 //X.order_of_key(A)
 
 const int L=1e6+7;
-int counter[L],n;
-std::vector<int> v,vv;
+map<ll,ll> counter;
+std::vector<ll> b;
+ll a[L], aa[L], bb[L];
+int co[L], f[L];
 int main()
 {
 		ios_base::sync_with_stdio(false);
 	 	cin.tie(NULL);
-	 	int a;
-	 	cin>>n;
-	 	FOR(i,0,n)
-	 	{
-	 		cin>>a;
-	 		vv.pb(a);
-	 	}
-	 	sort(all(vv));
-	 	v.pb(vv[0]);
-	 	FOR(i,1,sz(vv))
-	 	{
-	 		if(vv[i] == vv[i-1])continue;
-	 		v.pb(vv[i]);
-	 	}
-	 	int ans=0;
-	 	std::vector<int> ::iterator it;
-	 	FOR(i,0,sz(v))
-	 	{
-	 		if(v[i]==1)continue;
-	 		for (int j = v[i]*2; j <= v[sz(v)-1]+v[i]; j += v[i])
-	 		{
-	 			it = lower_bound(all(v),j);
-	 			if(it == v.begin())break;
-	 			it--;
-	 			ans = max(ans , *it % v[i]);
-	 		}
-	 	}
-	 	cout<<ans;
+	 	ll n, m, ta, tb, k,tt;
+	 	cin >> n >> m >> ta >> tb >> k ;
+		FOR(i,0,n)
+		{
+			cin >> a[i];
+			a[i] += ta;
+		}
+		for (int i = 0; i < m; ++i)
+		{
+			cin >> tt;
+			b.pb(tt);
+		}
+		if(n<=k || m<=k)
+		{
+			cout<<"-1";
+			return 0;
+		}
+		ll ans = 0;
+		std::vector<ll> ::iterator it;
+		FOR(i,0,k+1)
+		{
+			if(b[m-k+i-1]<a[i])
+			{
+				cout<<"-1";
+				return 0;
+			}
+			it = lower_bound(all(b), a[i]);
+			ans = max(ans, b[(it-b.begin()) + k - i] + tb);
+		}
+		cout<<ans;
 		return 0;
 }

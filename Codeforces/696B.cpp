@@ -39,40 +39,39 @@ typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_upda
 //NO OF ELEMENTS < A
 //X.order_of_key(A)
 
-const int L=1e6+7;
-int counter[L],n;
-std::vector<int> v,vv;
+const int L=1e5+7;
+std::vector<int> v[L];
+ld subtree[L], depth[L];
+ld dfs(int vertex = 1, int parent = -1, ld d = 1)
+{
+	depth[vertex] = d;
+	subtree[vertex] = 1;
+	trace(v[vertex], x)
+	{
+		if(x!=parent)
+		{
+			subtree[vertex] += dfs(x, vertex, d+1);
+		}
+	}
+	return subtree[vertex];
+}
 int main()
 {
 		ios_base::sync_with_stdio(false);
 	 	cin.tie(NULL);
+	 	ld n;
 	 	int a;
-	 	cin>>n;
-	 	FOR(i,0,n)
+	 	cin >> n;
+	 	FOR(i,2,n+1)
 	 	{
-	 		cin>>a;
-	 		vv.pb(a);
+	 		cin >> a;
+	 		v[a].pb(i);
+	 		v[i].pb(a);
 	 	}
-	 	sort(all(vv));
-	 	v.pb(vv[0]);
-	 	FOR(i,1,sz(vv))
+	 	dfs();
+	 	FOR(i,1,n+1)
 	 	{
-	 		if(vv[i] == vv[i-1])continue;
-	 		v.pb(vv[i]);
+	 		printf("%.10Lf ",depth[i] + (n-subtree[i]-depth[i]+1)/2.0);
 	 	}
-	 	int ans=0;
-	 	std::vector<int> ::iterator it;
-	 	FOR(i,0,sz(v))
-	 	{
-	 		if(v[i]==1)continue;
-	 		for (int j = v[i]*2; j <= v[sz(v)-1]+v[i]; j += v[i])
-	 		{
-	 			it = lower_bound(all(v),j);
-	 			if(it == v.begin())break;
-	 			it--;
-	 			ans = max(ans , *it % v[i]);
-	 		}
-	 	}
-	 	cout<<ans;
 		return 0;
 }

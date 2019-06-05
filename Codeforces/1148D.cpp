@@ -40,39 +40,40 @@ typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_upda
 //X.order_of_key(A)
 
 const int L=1e6+7;
-int counter[L],n;
-std::vector<int> v,vv;
+map<pii,ll> counter;
+bool comps(pii x, pii y)
+{
+	return x.S > y.S;
+}
+bool compf(pii x, pii y)
+{
+	return x.S < y.S;
+}
 int main()
 {
 		ios_base::sync_with_stdio(false);
 	 	cin.tie(NULL);
-	 	int a;
-	 	cin>>n;
-	 	FOR(i,0,n)
-	 	{
-	 		cin>>a;
-	 		vv.pb(a);
-	 	}
-	 	sort(all(vv));
-	 	v.pb(vv[0]);
-	 	FOR(i,1,sz(vv))
-	 	{
-	 		if(vv[i] == vv[i-1])continue;
-	 		v.pb(vv[i]);
-	 	}
-	 	int ans=0;
-	 	std::vector<int> ::iterator it;
-	 	FOR(i,0,sz(v))
-	 	{
-	 		if(v[i]==1)continue;
-	 		for (int j = v[i]*2; j <= v[sz(v)-1]+v[i]; j += v[i])
-	 		{
-	 			it = lower_bound(all(v),j);
-	 			if(it == v.begin())break;
-	 			it--;
-	 			ans = max(ans , *it % v[i]);
-	 		}
-	 	}
-	 	cout<<ans;
+		int n, a, b;
+		cin >> n;
+		std::vector<pii> f, s;
+		FOR(i,0,n)
+		{
+			cin >> a >> b;
+			if(a>b)f.pb(mp(a,b));
+			if(a<b)s.pb(mp(a,b));
+			counter[mp(a,b)] = i+1;
+		}
+		if(sz(f) >= sz(s))
+		{
+			sort(all(f), compf);
+			cout<<sz(f)<<ln;
+			trace(f, x)cout<<counter[x]<<" ";
+		}
+		else
+		{
+			sort(all(s), comps);
+			cout<<sz(s)<<ln;
+			trace(s, x)cout<<counter[x]<<" ";
+		}
 		return 0;
 }
