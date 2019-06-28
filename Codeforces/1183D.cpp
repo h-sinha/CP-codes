@@ -27,7 +27,7 @@ using namespace std;
 #define S second
 #define all(c)	c.begin(),c.end()
 #define trace(c,x) for(auto &x:c)
-#define pii pair<ll,ll>
+#define pii pair<int,int>
 typedef long long ll;
 typedef long double ld;
 typedef	priority_queue<pii,std::vector<pii>,greater<pii> > revpr;
@@ -39,43 +39,55 @@ typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_upda
 //NO OF ELEMENTS < A
 //X.order_of_key(A)
 
-const int L=1e5+7;
-std::vector<int> v[L];
-ll val[L], ans;
-pii subtree[L];
-void dfs(int vertex, int parent = -1)
-{
-	ll ret = 0;
-	trace(v[vertex],  x)
-	{
-		if(x != parent)
-		{
-			dfs(x, vertex);
-			subtree[vertex].F = max(subtree[vertex].F, subtree[x].F);
-			subtree[vertex].S = min(subtree[vertex].S, subtree[x].S);
-		}
-	}
-	val[vertex] -= subtree[vertex].F;
-	val[vertex] -= subtree[vertex].S;
-	if(val[vertex] > 0)subtree[vertex].F += val[vertex];
-	else subtree[vertex].S += val[vertex];
-	// debug(vertex, val[vertex], subtree[vertex].F, subtree[vertex].S);
-	return;
-}
+const int L=1e6+7;
+int co[L], a[L], f[L];
 int main()
 {
 		ios_base::sync_with_stdio(false);
 	 	cin.tie(NULL);
-	 	int n, a, b;
-	 	cin >> n;
-	 	FOR(i,0,n-1)
-	 	{
-	 		cin >> a >> b;
-	 		v[a].pb(b);
-	 		v[b].pb(a);
-	 	}
-	 	FOR(i,1,n+1)cin >> val[i];
-		dfs(1);
-		cout<<subtree[1].F + abs(subtree[1].S);
+		int q, n, ff;
+		cin >> q;
+		std::vector<pii> v;
+		while(q--)
+		{
+			cin >>n;
+			v.clear();
+			FOR(i,1,n+1)co[i] = 0, f[i] = 0;
+			FOR(i,0,n)
+			{
+				cin >> a[i] >> ff;
+				co[a[i]]++;
+				if(ff)
+				f[a[i]]++;
+			}
+			FOR(i,1,n+1)
+			{
+				if(co[i] > 0)v.pb(mp(co[i], f[i]));
+			}
+			sort(all(v));
+			int cur,tt,ans = 0, prev, tot = 0;
+			prev = v[sz(v)-1].F+1;
+			int j, mx = -1,idx;
+			RFOR(i,sz(v)-1, 0)
+			{
+				if(v[i].F < prev - 1)
+					prev = v[i].F + 1;
+				mx = min(v[i].S,prev-1);
+				j = i;
+				idx = i;
+				while(j>=0 && v[j].F>=prev-1)
+				{
+					if(mx>min(v[j].S,prev-1))idx = j;
+					mx = max(mx,min(v[j].S,prev-1));
+					j--;
+				}
+				ans += (prev-1);
+				prev--;
+				tot += mx; 
+				i = idx;
+				if(prev == 0)break;
+			}
+			cout<<ans<<" "<<tot<<ln;
+		}
 		return 0;
 }

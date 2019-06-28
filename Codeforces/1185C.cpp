@@ -17,8 +17,8 @@ using namespace std;
 #else
 #define debug(...)
 #endif
-#define FOR(i,a,b) 	for(int i=a;i<b;++i)
-#define RFOR(i,a,b) 	for(int i=a;i>=b;--i)
+#define FOR(i,a,b) 	for(ll i=a;i<b;++i)
+#define RFOR(i,a,b) 	for(ll i=a;i>=b;--i)
 #define ln 		"\n"
 #define mp make_pair
 #define pb push_back
@@ -32,50 +32,45 @@ typedef long long ll;
 typedef long double ld;
 typedef	priority_queue<pii,std::vector<pii>,greater<pii> > revpr;
 
-typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_update> pbds;
+typedef tree<ll,null_type,less<ll>,rb_tree_tag,tree_order_statistics_node_update> pbds;
 // ordered_set X
 //K-th smallest
 //*X.find_by_order(k-1)
 //NO OF ELEMENTS < A
 //X.order_of_key(A)
 
-const int L=1e5+7;
-std::vector<int> v[L];
-ll val[L], ans;
-pii subtree[L];
-void dfs(int vertex, int parent = -1)
-{
-	ll ret = 0;
-	trace(v[vertex],  x)
-	{
-		if(x != parent)
-		{
-			dfs(x, vertex);
-			subtree[vertex].F = max(subtree[vertex].F, subtree[x].F);
-			subtree[vertex].S = min(subtree[vertex].S, subtree[x].S);
-		}
-	}
-	val[vertex] -= subtree[vertex].F;
-	val[vertex] -= subtree[vertex].S;
-	if(val[vertex] > 0)subtree[vertex].F += val[vertex];
-	else subtree[vertex].S += val[vertex];
-	// debug(vertex, val[vertex], subtree[vertex].F, subtree[vertex].S);
-	return;
-}
+const ll L=1e6+7;
+map<ll,ll> counter;
+ll t[L], co[L];
 int main()
 {
 		ios_base::sync_with_stdio(false);
 	 	cin.tie(NULL);
-	 	int n, a, b;
-	 	cin >> n;
-	 	FOR(i,0,n-1)
+	 	ll n, m;
+	 	cin >> n >> m;
+	 	FOR(i,0,n)cin >> t[i];
+	 	multiset<ll>SET,er,rem;
+	 	multiset<ll>::iterator it;
+	 	ll cur, sofar = 0, tmp, req, ans = 0;
+	 	FOR(i,0,n)
 	 	{
-	 		cin >> a >> b;
-	 		v[a].pb(b);
-	 		v[b].pb(a);
+	 		tmp = sofar;
+	 		if(sofar + t[i]<=m)cout<<0<<" ";
+	 		else 
+	 		{
+	 			ans = 0;
+	 			RFOR(j,100,1)
+	 			{
+	 				req = min((tmp + t[i] - m + j - 1)/j, co[j]);
+	 				ans += req;
+	 				tmp -= (req * j);
+	 				if(tmp + t[i] <= m)break;
+	 			}
+	 			cout<<ans<<" ";
+	 		}
+	 		co[t[i]]++;
+	 		sofar += t[i];
+
 	 	}
-	 	FOR(i,1,n+1)cin >> val[i];
-		dfs(1);
-		cout<<subtree[1].F + abs(subtree[1].S);
 		return 0;
 }

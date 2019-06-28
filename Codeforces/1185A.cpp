@@ -39,43 +39,18 @@ typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_upda
 //NO OF ELEMENTS < A
 //X.order_of_key(A)
 
-const int L=1e5+7;
-std::vector<int> v[L];
-ll val[L], ans;
-pii subtree[L];
-void dfs(int vertex, int parent = -1)
-{
-	ll ret = 0;
-	trace(v[vertex],  x)
-	{
-		if(x != parent)
-		{
-			dfs(x, vertex);
-			subtree[vertex].F = max(subtree[vertex].F, subtree[x].F);
-			subtree[vertex].S = min(subtree[vertex].S, subtree[x].S);
-		}
-	}
-	val[vertex] -= subtree[vertex].F;
-	val[vertex] -= subtree[vertex].S;
-	if(val[vertex] > 0)subtree[vertex].F += val[vertex];
-	else subtree[vertex].S += val[vertex];
-	// debug(vertex, val[vertex], subtree[vertex].F, subtree[vertex].S);
-	return;
-}
+const int L=1e6+7;
+map<ll,ll> counter;
 int main()
 {
 		ios_base::sync_with_stdio(false);
 	 	cin.tie(NULL);
-	 	int n, a, b;
-	 	cin >> n;
-	 	FOR(i,0,n-1)
-	 	{
-	 		cin >> a >> b;
-	 		v[a].pb(b);
-	 		v[b].pb(a);
-	 	}
-	 	FOR(i,1,n+1)cin >> val[i];
-		dfs(1);
-		cout<<subtree[1].F + abs(subtree[1].S);
+	 	ll a[3], d;
+	 	cin >> a[0] >> a[1] >> a[2] >> d;
+	 	sort(a, a+3);
+	 	ll ans = 0;
+	 	ans = max(a[1] + d -a[2], 0LL);
+	 	ans += max(a[0] - a[1] + d, 0LL);
+	 	cout<<ans;
 		return 0;
 }

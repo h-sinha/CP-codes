@@ -39,43 +39,68 @@ typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_upda
 //NO OF ELEMENTS < A
 //X.order_of_key(A)
 
-const int L=1e5+7;
-std::vector<int> v[L];
-ll val[L], ans;
-pii subtree[L];
-void dfs(int vertex, int parent = -1)
+const int L=1e6+7;
+map<ll,ll> counter;
+ll fastexpo(ll x,ll y,ll m)
 {
-	ll ret = 0;
-	trace(v[vertex],  x)
+	ll temp=1;
+	while(y>0)
 	{
-		if(x != parent)
+		if(y&1)temp = ((temp%m)*(x%m))%m;
+		x = ((x%m)*(x%m))%m;
+		y>>=1;
+	}return temp;
+}
+int ctr[L][3];
+string compress(string s, int f)
+{
+	string o = "";
+	o += s[0];
+	int len = s.length(), co = 1;
+	FOR(i,0,len)ctr[i][f] = 0;
+	int cur = 0;
+	FOR(i,1,len)
+	{
+		if(s[i] != s[i-1])
 		{
-			dfs(x, vertex);
-			subtree[vertex].F = max(subtree[vertex].F, subtree[x].F);
-			subtree[vertex].S = min(subtree[vertex].S, subtree[x].S);
+			ctr[cur][f] = co;
+			o += s[i];
+			co = 0;
+			cur++;
 		}
+		co++;
 	}
-	val[vertex] -= subtree[vertex].F;
-	val[vertex] -= subtree[vertex].S;
-	if(val[vertex] > 0)subtree[vertex].F += val[vertex];
-	else subtree[vertex].S += val[vertex];
-	// debug(vertex, val[vertex], subtree[vertex].F, subtree[vertex].S);
-	return;
+	ctr[cur][f] = co;
+	return o;
 }
 int main()
 {
 		ios_base::sync_with_stdio(false);
 	 	cin.tie(NULL);
-	 	int n, a, b;
+	 	int n;
 	 	cin >> n;
-	 	FOR(i,0,n-1)
+	 	string s,t;
+	 	while(n--)
 	 	{
-	 		cin >> a >> b;
-	 		v[a].pb(b);
-	 		v[b].pb(a);
+	 		cin >> s;
+	 		cin >> t;
+	 		string c1 = compress(s,0);
+	 		string c2 = compress(t,1);
+	 		int no = 0;
+	 		if(c1 == c2)
+	 		{
+	 			int len = c1.length();
+	 			FOR(i,0,len)
+	 			{
+	 				if(ctr[i][1]<ctr[i][0])no = 1;
+	 			}
+	 			if(no)cout<<"NO\n";
+	 			else cout<<"YES\n";
+	 		}
+	 		else
+	 		{
+	 			cout<<"NO\n";
+	 		}
 	 	}
-	 	FOR(i,1,n+1)cin >> val[i];
-		dfs(1);
-		cout<<subtree[1].F + abs(subtree[1].S);
 		return 0;
 }

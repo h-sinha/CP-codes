@@ -32,50 +32,50 @@ typedef long long ll;
 typedef long double ld;
 typedef	priority_queue<pii,std::vector<pii>,greater<pii> > revpr;
 
-typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_update> pbds;
+typedef tree<ll,null_type,less<ll>,rb_tree_tag,tree_order_statistics_node_update> pbds;
 // ordered_set X
 //K-th smallest
 //*X.find_by_order(k-1)
 //NO OF ELEMENTS < A
 //X.order_of_key(A)
 
-const int L=1e5+7;
-std::vector<int> v[L];
-ll val[L], ans;
-pii subtree[L];
-void dfs(int vertex, int parent = -1)
+const int L=15;
+int n, tim, po[L], a[L], b[L], m = 1e9 + 7;
+ll dp[32769][226][3];
+ll solve(int mask, int sofar, int prev)
 {
-	ll ret = 0;
-	trace(v[vertex],  x)
+	if(sofar==tim)return 1LL;
+	if(sofar > tim)return 0LL;
+	if(dp[mask][sofar][prev] != -1)return dp[mask][sofar][prev];
+	dp[mask][sofar][prev] = 0;
+	FOR(i,0,n)
 	{
-		if(x != parent)
-		{
-			dfs(x, vertex);
-			subtree[vertex].F = max(subtree[vertex].F, subtree[x].F);
-			subtree[vertex].S = min(subtree[vertex].S, subtree[x].S);
-		}
+		if(b[i] == prev)continue;
+		if(mask & po[i])continue;
+		dp[mask][sofar][prev] = (dp[mask][sofar][prev] + solve(mask|po[i], sofar + a[i], b[i]))%m; 
 	}
-	val[vertex] -= subtree[vertex].F;
-	val[vertex] -= subtree[vertex].S;
-	if(val[vertex] > 0)subtree[vertex].F += val[vertex];
-	else subtree[vertex].S += val[vertex];
-	// debug(vertex, val[vertex], subtree[vertex].F, subtree[vertex].S);
-	return;
+	return dp[mask][sofar][prev];
+}
+void pre()
+{
+	po[0] = 1;
+	FOR(i,1,15)
+	{
+		po[i] = (po[i-1]*2);
+	}
 }
 int main()
 {
 		ios_base::sync_with_stdio(false);
 	 	cin.tie(NULL);
-	 	int n, a, b;
-	 	cin >> n;
-	 	FOR(i,0,n-1)
-	 	{
-	 		cin >> a >> b;
-	 		v[a].pb(b);
-	 		v[b].pb(a);
-	 	}
-	 	FOR(i,1,n+1)cin >> val[i];
-		dfs(1);
-		cout<<subtree[1].F + abs(subtree[1].S);
+	 	cin >> n >> tim;
+		pre();
+		FOR(i,0,n)
+			cin >> a[i] >> b[i];
+		FOR(i,0,32769)
+			FOR(j,0,226)
+				FOR(k,0,4)
+					dp[i][j][k] = -1;
+		cout<<solve(0,0,0);
 		return 0;
 }

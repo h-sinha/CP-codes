@@ -39,43 +39,45 @@ typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_upda
 //NO OF ELEMENTS < A
 //X.order_of_key(A)
 
-const int L=1e5+7;
-std::vector<int> v[L];
-ll val[L], ans;
-pii subtree[L];
-void dfs(int vertex, int parent = -1)
+const int L=1e6+7;
+void solve()
 {
-	ll ret = 0;
-	trace(v[vertex],  x)
+	int n, a;
+	cin >> n;
+	set<int>SET;
+	std::vector<int> v;
+	FOR(i,0,n)
 	{
-		if(x != parent)
+		cin >> a;
+		SET.insert(a);
+	}
+	trace(SET,x)v.pb(x);
+	n = sz(v);
+	int ans = 0;
+	RFOR(i,n-1,0)
+	{
+		ans = max(ans, v[i]);
+		RFOR(j,i-1,0)
 		{
-			dfs(x, vertex);
-			subtree[vertex].F = max(subtree[vertex].F, subtree[x].F);
-			subtree[vertex].S = min(subtree[vertex].S, subtree[x].S);
+			if(v[i]%v[j]==0)continue;
+			ans = max(ans, v[i] + v[j]);
+			if(j>0 && v[i]+v[j]+v[j-1]<=ans)break;
+			RFOR(k,j-1,0)
+			{
+				if(v[i]%v[k]==0 || v[j]%v[k]==0)continue;
+				ans = max(ans, v[i]+ v[j] + v[k]);
+				break;
+			}
 		}
 	}
-	val[vertex] -= subtree[vertex].F;
-	val[vertex] -= subtree[vertex].S;
-	if(val[vertex] > 0)subtree[vertex].F += val[vertex];
-	else subtree[vertex].S += val[vertex];
-	// debug(vertex, val[vertex], subtree[vertex].F, subtree[vertex].S);
-	return;
+	cout<<ans<<ln;
 }
 int main()
 {
 		ios_base::sync_with_stdio(false);
 	 	cin.tie(NULL);
-	 	int n, a, b;
-	 	cin >> n;
-	 	FOR(i,0,n-1)
-	 	{
-	 		cin >> a >> b;
-	 		v[a].pb(b);
-	 		v[b].pb(a);
-	 	}
-	 	FOR(i,1,n+1)cin >> val[i];
-		dfs(1);
-		cout<<subtree[1].F + abs(subtree[1].S);
+		int q;
+		cin >> q;
+		while(q--)solve();	 	
 		return 0;
 }

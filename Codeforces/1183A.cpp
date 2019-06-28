@@ -39,43 +39,48 @@ typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_upda
 //NO OF ELEMENTS < A
 //X.order_of_key(A)
 
-const int L=1e5+7;
-std::vector<int> v[L];
-ll val[L], ans;
-pii subtree[L];
-void dfs(int vertex, int parent = -1)
+const int L=1e6+7;
+map<ll,ll> counter;
+ll fastexpo(ll x,ll y,ll m)
 {
-	ll ret = 0;
-	trace(v[vertex],  x)
+	ll temp=1;
+	while(y>0)
 	{
-		if(x != parent)
-		{
-			dfs(x, vertex);
-			subtree[vertex].F = max(subtree[vertex].F, subtree[x].F);
-			subtree[vertex].S = min(subtree[vertex].S, subtree[x].S);
-		}
+		if(y&1)temp = ((temp%m)*(x%m))%m;
+		x = ((x%m)*(x%m))%m;
+		y>>=1;
+	}return temp;
+}
+bool check(int n)
+{
+	int a= 0;
+	while(n>0)
+	{
+		a+=(n%10);
+		n/=10;
 	}
-	val[vertex] -= subtree[vertex].F;
-	val[vertex] -= subtree[vertex].S;
-	if(val[vertex] > 0)subtree[vertex].F += val[vertex];
-	else subtree[vertex].S += val[vertex];
-	// debug(vertex, val[vertex], subtree[vertex].F, subtree[vertex].S);
-	return;
+	if(a%4==0)return 1;
+	return 0;
 }
 int main()
 {
 		ios_base::sync_with_stdio(false);
 	 	cin.tie(NULL);
-	 	int n, a, b;
-	 	cin >> n;
-	 	FOR(i,0,n-1)
+	 	int n;
+	 	int t;
+	 	cin >> t;
+	 	while(t--)
 	 	{
-	 		cin >> a >> b;
-	 		v[a].pb(b);
-	 		v[b].pb(a);
+	 	cin >> n;
+	 	while(1)
+	 	{
+	 		if(check(n))
+	 		{
+	 			cout<<n<<ln;
+	 			break;
+	 		}
+	 		n++;
 	 	}
-	 	FOR(i,1,n+1)cin >> val[i];
-		dfs(1);
-		cout<<subtree[1].F + abs(subtree[1].S);
-		return 0;
+	 }
+	return 0;
 }
