@@ -31,62 +31,84 @@ using namespace std;
 typedef long long ll;
 typedef long double ld;
 typedef	priority_queue<pii,std::vector<pii>,greater<pii> > revpr;
+
 typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_update> pbds;
 // ordered_set X
 //K-th smallest
 //*X.find_by_order(k-1)
 //NO OF ELEMENTS < A
 //X.order_of_key(A)
-const int L=5e5+7;
-int t, st[L], en[L];
-string s;
-std::vector<int> dpt_time[L], v[L], cumsum[L];
-void dfs(int vertex = 1, int depth = 1)
-{
-	st[vertex] = t++;
-	dpt_time[depth].pb(t-1);
-	if(sz(dpt_time[depth]) != 1)
-	{
-		cumsum[depth].pb(*cumsum[depth].rbegin());
-		cumsum[depth][sz(cumsum[depth])-1] ^= (1<<(s[vertex-1]-'a'));
-	}
-	else
-	{
-		cumsum[depth].pb(1<<(s[vertex-1]-'a'));
-	}
-	trace(v[vertex], x)
-		dfs(x, depth+1);
-	en[vertex] = t-1;
-}
+
+const int L=1e6+7;
+int x[L], y[L], deg[L], ans[L], done[L];
+set<int> v[L];
 int main()
 {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
-	int n, m, a, node, height, l, r, co, cur;
-	cin >> n >> m;
-	FOR(i,2,n+1)
+	int n, m, k;
+	cin >> n >> m >> k;
+	FOR(i,0,m)
 	{
-		cin >> a;
-		v[a].pb(i);
+		cin >> x[i] >> y[i];
+		v[x[i]].insert(y[i]);
+		v[y[i]].insert(x[i]);
+		deg[x[i]]++;
+		deg[y[i]]++;
 	}
-	cin >> s;
-	dfs();
-	while(m--)
+	FOR(i,1,n+1)
 	{
-		cin >> node >> height;
-		r = upper_bound(all(dpt_time[height]), en[node]) - dpt_time[height].begin();
-		l = lower_bound(all(dpt_time[height]), st[node]) - dpt_time[height].begin();
-		if(l>r || l == r)cout<<"Yes\n";
-		else
+		if(deg[i] < k)
 		{
-			if(l > 0)
-				cur = cumsum[height][r-1] ^ cumsum[height][l-1];
-			else
-				cur = cumsum[height][r-1];	
-			co = __builtin_popcount(cur);
-			if(co>1)cout<<"No\n";
-			else cout<<"Yes\n";
+			done[i] = 1;
+			deg[i] = 0;
+			trace(v[i], x)
+			{
+				v[x].erase(i);
+				deg[x]--;
+			}
 		}
 	}
+	set<int>SET;
+	FOR(i,1,n+1)
+		if(deg[i] >= k)
+			SET.insert(i);
+	ans[m-1] = sz(SET);
+	RFOR(i,m-1,0)
+	{
+		while(!SET.empty() && deg[*SET.begin()]<k)SET.erase(SET.begin());
+		if(SET.empty())break;
+		if(v[x[i]].find(y[i]) != v[x[i]].end())
+		deg[x[i]]--, deg[y[i]]--;
+		if(deg[x[i]] == k-1)
+		{
+			SET.erase(x[i]);
+			trace(v[x[i]], xx)
+			{
+				if(xx == y[i])continue;
+				deg[xx]--;
+				v[xx].erase(x[i]);
+				if(deg[xx] == k-1)SET.erase(xx), done[xx] = 1;
+			}
+			v[x[i]].clear();
+		}
+		if(deg[y[i]] == k-1)
+		{
+			SET.erase(y[i]);
+			done[y[i]] = 1;
+			trace(v[y[i]], xx)
+			{
+				if(xx == x[i])continue;
+				deg[xx]--;
+				v[xx].erase(y[i]);
+				if(deg[xx] == k-1)SET.erase(xx), done[xx] = 1;
+			}
+			v[y[i]].clear();
+		}
+		v[x[i]].erase(y[i]);
+		v[y[i]].erase(x[i]);
+		ans[i-1] = sz(SET);
+	}
+	FOR(i,0,m)cout<<ans[i]<<ln;
 	return 0;
 }

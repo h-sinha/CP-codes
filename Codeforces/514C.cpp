@@ -17,7 +17,7 @@ using namespace std;
 #else
 #define debug(...)
 #endif
-#define FOR(i,a,b) 	for(int i=a;i<b;++i)
+#define FOR(i,a,b) 	for(ll i=a;i<b;++i)
 #define RFOR(i,a,b) 	for(int i=a;i>=b;--i)
 #define ln 		"\n"
 #define mp make_pair
@@ -31,62 +31,80 @@ using namespace std;
 typedef long long ll;
 typedef long double ld;
 typedef	priority_queue<pii,std::vector<pii>,greater<pii> > revpr;
+
 typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_update> pbds;
 // ordered_set X
 //K-th smallest
 //*X.find_by_order(k-1)
 //NO OF ELEMENTS < A
 //X.order_of_key(A)
-const int L=5e5+7;
-int t, st[L], en[L];
-string s;
-std::vector<int> dpt_time[L], v[L], cumsum[L];
-void dfs(int vertex = 1, int depth = 1)
+
+const int L=1e6+7;
+ll m = 1e12 + 39, po37[L], po53[L];
+set<pii>string_hash[L];
+void pre()
 {
-	st[vertex] = t++;
-	dpt_time[depth].pb(t-1);
-	if(sz(dpt_time[depth]) != 1)
+	po37[0] = po53[0] = 1;
+	FOR(i,1,1000001)
 	{
-		cumsum[depth].pb(*cumsum[depth].rbegin());
-		cumsum[depth][sz(cumsum[depth])-1] ^= (1<<(s[vertex-1]-'a'));
+		po37[i] = (po37[i-1] * 37LL)%m;
+		po53[i] = (po53[i-1] * 53LL)%m;
 	}
-	else
+}
+void process(string s)
+{
+	int n = s.length();
+	ll h1 = 0, h2 = 0;
+	FOR(i,0,n)
 	{
-		cumsum[depth].pb(1<<(s[vertex-1]-'a'));
+		h1 = (h1 + (po37[i]*ll(s[i]-'a'+1))%m)%m;
+		h2 = (h2 + (po53[i]*ll(s[i]-'a'+1))%m)%m;
 	}
-	trace(v[vertex], x)
-		dfs(x, depth+1);
-	en[vertex] = t-1;
+	string_hash[n].insert({h1,h2});
+}
+bool check(string s)
+{
+	int n = s.length();
+	if(string_hash[n].empty())return 0;
+	ll h1 = 0, h2 = 0, t1, t2;
+	FOR(i,0,n)
+	{
+		h1 = (h1 + (po37[i]*ll(s[i]-'a'+1))%m)%m;
+		h2 = (h2 + (po53[i]*ll(s[i]-'a'+1))%m)%m;
+	}
+	FOR(i,0,n)
+	{
+		FOR(j,1,4)
+		{
+			if(j-1 == s[i] - 'a')continue;
+			t1 = h1, t2 = h2;
+			t1 = (t1 - (po37[i]*(s[i]-'a'+1))%m + m)%m;
+			t2 = (t2 - (po53[i]*(s[i]-'a'+1))%m + m)%m;
+			t1 = (t1 + (po37[i]*j)%m)%m;
+			t2 = (t2 + (po53[i]*j)%m)%m;
+			if(string_hash[n].find({t1,t2}) != string_hash[n].end())return 1;
+		}
+	}
+	return 0;
 }
 int main()
 {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
-	int n, m, a, node, height, l, r, co, cur;
+	int n, m;
+	string s;
 	cin >> n >> m;
-	FOR(i,2,n+1)
+	pre();
+	while(n--)
 	{
-		cin >> a;
-		v[a].pb(i);
+		cin >> s;
+		process(s);
 	}
-	cin >> s;
-	dfs();
 	while(m--)
 	{
-		cin >> node >> height;
-		r = upper_bound(all(dpt_time[height]), en[node]) - dpt_time[height].begin();
-		l = lower_bound(all(dpt_time[height]), st[node]) - dpt_time[height].begin();
-		if(l>r || l == r)cout<<"Yes\n";
-		else
-		{
-			if(l > 0)
-				cur = cumsum[height][r-1] ^ cumsum[height][l-1];
-			else
-				cur = cumsum[height][r-1];	
-			co = __builtin_popcount(cur);
-			if(co>1)cout<<"No\n";
-			else cout<<"Yes\n";
-		}
+		cin >> s;
+		if(check(s))cout<<"YES\n";
+		else cout<<"NO\n";
 	}
 	return 0;
 }

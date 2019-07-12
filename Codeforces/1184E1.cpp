@@ -17,8 +17,8 @@ using namespace std;
 #else
 #define debug(...)
 #endif
-#define FOR(i,a,b) 	for(int i=a;i<b;++i)
-#define RFOR(i,a,b) 	for(int i=a;i>=b;--i)
+#define FOR(i,a,b) 	for(ll i=a;i<b;++i)
+#define RFOR(i,a,b) 	for(ll i=a;i>=b;--i)
 #define ln 		"\n"
 #define mp make_pair
 #define pb push_back
@@ -31,62 +31,75 @@ using namespace std;
 typedef long long ll;
 typedef long double ld;
 typedef	priority_queue<pii,std::vector<pii>,greater<pii> > revpr;
-typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_update> pbds;
+
+typedef tree<ll,null_type,less<ll>,rb_tree_tag,tree_order_statistics_node_update> pbds;
 // ordered_set X
 //K-th smallest
 //*X.find_by_order(k-1)
 //NO OF ELEMENTS < A
 //X.order_of_key(A)
-const int L=5e5+7;
-int t, st[L], en[L];
-string s;
-std::vector<int> dpt_time[L], v[L], cumsum[L];
-void dfs(int vertex = 1, int depth = 1)
+
+const ll L=1e6+7;
+struct node
 {
-	st[vertex] = t++;
-	dpt_time[depth].pb(t-1);
-	if(sz(dpt_time[depth]) != 1)
+	ll x, y, weight,idx;
+};
+std::vector<node> v;
+std::vector<pii> adj[L];
+bool comp(node x, node y)
+{
+	return x.weight < y.weight;
+}
+ll parent[L], children[L], add[L];
+ll find(ll x)
+{
+	if(parent[x] == x)return x;
+	return parent[x] = find(parent[x]);
+}
+void merge(ll a, ll b)
+{
+	ll pa = find(a);
+	ll pb = find(b);
+	if(children[pa] > children[pb])
 	{
-		cumsum[depth].pb(*cumsum[depth].rbegin());
-		cumsum[depth][sz(cumsum[depth])-1] ^= (1<<(s[vertex-1]-'a'));
+		children[pb] += children[pa];
+		parent[pa] = pb;
 	}
 	else
 	{
-		cumsum[depth].pb(1<<(s[vertex-1]-'a'));
+		children[pa] += children[pb];
+		parent[pb] = pa;
 	}
-	trace(v[vertex], x)
-		dfs(x, depth+1);
-	en[vertex] = t-1;
+	return;
 }
 int main()
 {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
-	int n, m, a, node, height, l, r, co, cur;
+	ll n, m, cur, a, b, c, d;
 	cin >> n >> m;
-	FOR(i,2,n+1)
+	ll fr, to, wt;
+	FOR(i,0,m)
 	{
-		cin >> a;
-		v[a].pb(i);
-	}
-	cin >> s;
-	dfs();
-	while(m--)
-	{
-		cin >> node >> height;
-		r = upper_bound(all(dpt_time[height]), en[node]) - dpt_time[height].begin();
-		l = lower_bound(all(dpt_time[height]), st[node]) - dpt_time[height].begin();
-		if(l>r || l == r)cout<<"Yes\n";
-		else
+		cin >> a >> b >> c;
+		if(i == 0)
 		{
-			if(l > 0)
-				cur = cumsum[height][r-1] ^ cumsum[height][l-1];
-			else
-				cur = cumsum[height][r-1];	
-			co = __builtin_popcount(cur);
-			if(co>1)cout<<"No\n";
-			else cout<<"Yes\n";
+			fr = a, to = b, wt = c;
+			continue;
+		}
+		v.pb(node{a,b,c,i});
+	}
+	sort(all(v), comp);
+	FOR(i,1,n+1)parent[i] = i;
+	FOR(i,0,m-1)
+	{
+		merge(v[i].x,v[i].y);
+		if(find(fr) == find(to))
+		{
+			cout<<v[i].weight;
+			return 0;
 		}
 	}
+	cout<<1000000000;
 	return 0;
 }

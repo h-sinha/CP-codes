@@ -31,62 +31,71 @@ using namespace std;
 typedef long long ll;
 typedef long double ld;
 typedef	priority_queue<pii,std::vector<pii>,greater<pii> > revpr;
+
 typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_update> pbds;
 // ordered_set X
 //K-th smallest
 //*X.find_by_order(k-1)
 //NO OF ELEMENTS < A
 //X.order_of_key(A)
-const int L=5e5+7;
-int t, st[L], en[L];
-string s;
-std::vector<int> dpt_time[L], v[L], cumsum[L];
-void dfs(int vertex = 1, int depth = 1)
+
+const int L=1e6+7;
+std::vector<int> v[L];
+int deg[L], x[L], y[L], n, m;
+bool topo()
 {
-	st[vertex] = t++;
-	dpt_time[depth].pb(t-1);
-	if(sz(dpt_time[depth]) != 1)
+	int cur;
+	queue<int>q;
+	FOR(i,1,n+1)
+		if(deg[i] == 0)
+			q.push(i);
+	while(!q.empty())
 	{
-		cumsum[depth].pb(*cumsum[depth].rbegin());
-		cumsum[depth][sz(cumsum[depth])-1] ^= (1<<(s[vertex-1]-'a'));
+		if(sz(q) > 1)return 0;
+		cur = q.front();
+		q.pop();
+		trace(v[cur], x)
+		{
+			deg[x]--;
+			if(deg[x] == 0)q.push(x);
+		}
 	}
-	else
+	return 1;
+}
+bool check(int val)
+{
+	FOR(i,1,n+1)
 	{
-		cumsum[depth].pb(1<<(s[vertex-1]-'a'));
+		v[i].clear();
+		deg[i] = 0;
 	}
-	trace(v[vertex], x)
-		dfs(x, depth+1);
-	en[vertex] = t-1;
+	FOR(i,1,val+1)
+	{
+		deg[y[i]]++;
+		v[x[i]].pb(y[i]);
+	}
+	return topo();
+}
+void ser(int l, int r)
+{
+	int mid;
+	while(l < r - 1)
+	{
+		mid = (l + r)/2;
+		if(check(mid))r = mid;
+		else l = mid;
+	}
+	if(!check(r))r = l;
+	if(!check(r))cout<<"-1";
+	else cout<<r;
 }
 int main()
 {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
-	int n, m, a, node, height, l, r, co, cur;
 	cin >> n >> m;
-	FOR(i,2,n+1)
-	{
-		cin >> a;
-		v[a].pb(i);
-	}
-	cin >> s;
-	dfs();
-	while(m--)
-	{
-		cin >> node >> height;
-		r = upper_bound(all(dpt_time[height]), en[node]) - dpt_time[height].begin();
-		l = lower_bound(all(dpt_time[height]), st[node]) - dpt_time[height].begin();
-		if(l>r || l == r)cout<<"Yes\n";
-		else
-		{
-			if(l > 0)
-				cur = cumsum[height][r-1] ^ cumsum[height][l-1];
-			else
-				cur = cumsum[height][r-1];	
-			co = __builtin_popcount(cur);
-			if(co>1)cout<<"No\n";
-			else cout<<"Yes\n";
-		}
-	}
+	FOR(i,1,m+1)
+		cin >> x[i] >> y[i];
+	ser(1,m);
 	return 0;
 }

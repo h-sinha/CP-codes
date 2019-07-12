@@ -39,34 +39,29 @@ typedef tree<ll,null_type,less<ll>,rb_tree_tag,tree_order_statistics_node_update
 //NO OF ELEMENTS < A
 //X.order_of_key(A)
 
-const int L=20;
+const int L = 3e5+7;
+const int M=20;
 int n, m, k;
-ll a[L];
+ll a[M], po[M], dp[M][L];
 std::map<pii, ll> counter;
-ll solve(ll i, ll sofar, ll done[20])
+ll solve(int idx, int sofar)
 {
-	if(i>n || i<1 || sofar >m)return 0;
-	if(sofar == m)return a[i];
-	done[i] = 1;
-	ll tmp = 0, ret = 0;;
-	FOR(j,1,n+1)
+	ll x = __builtin_popcount(sofar);
+	if(x == m)return 0;
+	if(x == n || x > m)return INT_MIN;
+	if(dp[idx][sofar] != 0)return dp[idx][sofar];
+	x = 0;
+	ll ret = 0;
+	FOR(i,1,n+1)
 	{
-		if(i==2 && j==7)debug(i,j,done[j]);
-		// debug(j,done[j]);
-		if(done[j])continue;
-		if(counter.find(mp(i,j)) != counter.end())
+		if((sofar & po[i-1]) == 0)
 		{
-			tmp = counter[{i,j}];
+			if(counter.find({idx, i}) != counter.end())x = counter[{idx,i}];
+			else x = 0;
+			ret = max(ret, x + a[i] + solve(i, (sofar|po[i-1])));
 		}
-		else tmp = 0;
-		if(i==2 && j == 7)
-		debug(i,j,tmp);
-		// debug(i,j,tmp,a[i],solve(j,sofar+1,done));
-		ret = max(ret, solve(j,sofar+1,done) + a[i] + tmp);
 	}
-	done[i] = 0;
-	// debug(i,ret);
-	return ret;
+	return  dp[idx][sofar] = ret;
 }
 int main()
 {
@@ -79,15 +74,13 @@ int main()
 	 	FOR(i,0,k)
 	 	{
 	 		cin >> x >> y >> c;
-	 		counter[mp(x,y)] = c;
+	 		counter[{x,y}] = max(counter[{x,y}], c);
 	 	}
-	 	ll done[20], ans = 0;
-	 	FOR(i,2,3)
-	 	{
-	 		FOR(j,1,n+1)done[j] = 0;
-	 		ans = max(ans, solve(i, 1, done));
-	 		// cout<<ln;
-	 	}
-	 	cout<<ans;
+	 	po[0] = 1;
+	 	FOR(i,1,19)po[i] = (po[i-1]*2LL);
+	 	ll ans = 0;
+		FOR(i,1,n+1)ans = max(ans, a[i] + solve(i,po[i-1]));
+		cout<<ans;
 		return 0;
+
 }

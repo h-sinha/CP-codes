@@ -17,8 +17,8 @@ using namespace std;
 #else
 #define debug(...)
 #endif
-#define FOR(i,a,b) 	for(int i=a;i<b;++i)
-#define RFOR(i,a,b) 	for(int i=a;i>=b;--i)
+#define FOR(i,a,b) 	for(ll i=a;i<b;++i)
+#define RFOR(i,a,b) 	for(ll i=a;i>=b;--i)
 #define ln 		"\n"
 #define mp make_pair
 #define pb push_back
@@ -32,51 +32,53 @@ typedef long long ll;
 typedef long double ld;
 typedef	priority_queue<pii,std::vector<pii>,greater<pii> > revpr;
 
-typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_update> pbds;
+typedef tree<ll,null_type,less<ll>,rb_tree_tag,tree_order_statistics_node_update> pbds;
 // ordered_set X
 //K-th smallest
 //*X.find_by_order(k-1)
 //NO OF ELEMENTS < A
 //X.order_of_key(A)
 
-const int L=1e6+7;
-int a[L], ans=INT_MIN, nxt[L], prv[L];
+const ll L=1e6+7;
+ll a[L];
 int main()
 {
-		ios_base::sync_with_stdio(false);
-	 	cin.tie(NULL);
-	 	int n;
-	 	cin>>n;
-	 	FOR(i,0,n)cin>>a[i];
-	 	int l = 0, r = 1;
-	 	while(l < n)
-	 	{
-	 		if(r < n && a[r] > a[r-1])r++;
-	 		else
-	 		{
-	 			while(l<r)nxt[l++] = r - 1;
-	 			r++;
-	 		}
-	 	}
-	 	while(r >= 0)
-	 	{
-	 		if(l >= 0 && a[l] < a[l+1])l--;
-	 		else
-	 		{
-	 			while(l<r)prv[r--] = l + 1;
-	 			l--;
-	 		}
-	 	}
-	 	ans = max(nxt[1] + 1, nxt[0]);
-	 	FOR(i,1,n-1)
-	 	{
-	 		if(a[i-1] + 1 < a[i+1])
-	 			ans = max(ans, nxt[i+1] + 1 - prv[i-1]);
-	 		ans = max(ans, nxt[i+1] - i + 1);
-	 		ans = max(ans, i - prv[i-1] + 1);
-	 	}
-	 	ans = max(ans, n - prv[n-1]);
-	 	ans = max(ans, n - prv[n-2]);
-	 	cout << ans;
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	ll n, k;
+	cin >> k >> n;
+	FOR(i,0,n)
+	{
+		a[i] = i + 1;
+		k -= (i+1);
+	}
+	if(k < 0)
+	{
+		cout<<"NO";
 		return 0;
+	}
+	ll tot = (k/n);
+	k -= (tot*n);
+	FOR(i,0,n)a[i] += tot;
+	ll cur, f = 1;
+	while(k>0 && f)
+	{
+		f = 0;
+		RFOR(i,n-1,1)
+		{
+			if(k == 0)break;
+			cur = min(2*a[i-1]-a[i], k);
+			k -= cur;
+			a[i] += cur;
+			if(cur > 0)f = 1;
+		}
+	}
+	if(k>0)
+	{
+		cout<<"NO\n";
+		return 0;
+	}
+	cout<<"YES\n";
+	FOR(i,0,n)cout<<a[i]<<" ";
+	return 0;
 }

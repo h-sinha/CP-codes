@@ -27,66 +27,78 @@ using namespace std;
 #define S second
 #define all(c)	c.begin(),c.end()
 #define trace(c,x) for(auto &x:c)
-#define pii pair<ll,ll>
+#define pii pair<int,int>
 typedef long long ll;
 typedef long double ld;
 typedef	priority_queue<pii,std::vector<pii>,greater<pii> > revpr;
+
 typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_update> pbds;
 // ordered_set X
 //K-th smallest
 //*X.find_by_order(k-1)
 //NO OF ELEMENTS < A
 //X.order_of_key(A)
-const int L=5e5+7;
-int t, st[L], en[L];
-string s;
-std::vector<int> dpt_time[L], v[L], cumsum[L];
-void dfs(int vertex = 1, int depth = 1)
+
+const int L=2e3+7;
+int n, m, lmax, rmax, r, c;
+string s[L];
+int dist[L][L], dx[] = {0,0,1,-1}, dy[] = {1,-1,0,0};
+bool danger(int x, int y)
 {
-	st[vertex] = t++;
-	dpt_time[depth].pb(t-1);
-	if(sz(dpt_time[depth]) != 1)
+	if(x<0 || y <0 || x>=n || y>=m || s[x][y]=='*')return 1;
+	return 0;
+}
+void solve()
+{
+	queue<pii>q;
+	q.push({r,c});
+	dist[r][c] = 0;
+	pii tmp;int x, y;
+	while(!q.empty())
 	{
-		cumsum[depth].pb(*cumsum[depth].rbegin());
-		cumsum[depth][sz(cumsum[depth])-1] ^= (1<<(s[vertex-1]-'a'));
+		tmp = q.front();
+		q.pop();
+		x = tmp.F, y = tmp.S;
+		FOR(i,0,4)
+		{
+			if(!danger(x + dx[i], y + dy[i]))
+			{
+				if(dy[i] == -1 && dist[x + dx[i]][y + dy[i]] > dist[x][y] + 1)
+				{
+					dist[x + dx[i]][y + dy[i]] = dist[x][y] + 1;
+					q.push({x + dx[i], y + dy[i]});
+				}
+				else if(dy[i] != -1 && dist[x + dx[i]][y + dy[i]] > dist[x][y])
+				{
+					dist[x + dx[i]][y + dy[i]] = dist[x][y] ;
+					q.push({x + dx[i], y + dy[i]});
+				}
+			}
+		}
 	}
-	else
-	{
-		cumsum[depth].pb(1<<(s[vertex-1]-'a'));
-	}
-	trace(v[vertex], x)
-		dfs(x, depth+1);
-	en[vertex] = t-1;
 }
 int main()
 {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
-	int n, m, a, node, height, l, r, co, cur;
 	cin >> n >> m;
-	FOR(i,2,n+1)
+	cin >> r >> c;
+	cin >> lmax >> rmax;
+	r--,c--;
+	FOR(i,0,n)cin >> s[i];
+	FOR(i,0,n)FOR(j,0,m)dist[i][j] = lmax+1;
+	solve();
+	int co = 0, co1 = 0;
+	FOR(i,0,n)
 	{
-		cin >> a;
-		v[a].pb(i);
-	}
-	cin >> s;
-	dfs();
-	while(m--)
-	{
-		cin >> node >> height;
-		r = upper_bound(all(dpt_time[height]), en[node]) - dpt_time[height].begin();
-		l = lower_bound(all(dpt_time[height]), st[node]) - dpt_time[height].begin();
-		if(l>r || l == r)cout<<"Yes\n";
-		else
+		FOR(j,0,m)
 		{
-			if(l > 0)
-				cur = cumsum[height][r-1] ^ cumsum[height][l-1];
-			else
-				cur = cumsum[height][r-1];	
-			co = __builtin_popcount(cur);
-			if(co>1)cout<<"No\n";
-			else cout<<"Yes\n";
+			if(dist[i][j] != lmax + 1 && j-c+dist[i][j] <= rmax)
+			{
+				co++;
+			}
 		}
 	}
+	cout<<co;
 	return 0;
 }

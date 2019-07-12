@@ -31,62 +31,56 @@ using namespace std;
 typedef long long ll;
 typedef long double ld;
 typedef	priority_queue<pii,std::vector<pii>,greater<pii> > revpr;
+
 typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_update> pbds;
 // ordered_set X
 //K-th smallest
 //*X.find_by_order(k-1)
 //NO OF ELEMENTS < A
 //X.order_of_key(A)
-const int L=5e5+7;
-int t, st[L], en[L];
-string s;
-std::vector<int> dpt_time[L], v[L], cumsum[L];
-void dfs(int vertex = 1, int depth = 1)
+
+const int L=1e6+7;
+map<ll,ll> counter;
+string s[L];
+int n;
+bool mark(int i, int j)
 {
-	st[vertex] = t++;
-	dpt_time[depth].pb(t-1);
-	if(sz(dpt_time[depth]) != 1)
-	{
-		cumsum[depth].pb(*cumsum[depth].rbegin());
-		cumsum[depth][sz(cumsum[depth])-1] ^= (1<<(s[vertex-1]-'a'));
-	}
-	else
-	{
-		cumsum[depth].pb(1<<(s[vertex-1]-'a'));
-	}
-	trace(v[vertex], x)
-		dfs(x, depth+1);
-	en[vertex] = t-1;
+	if(i>=n-2 || j == 0 || j == n-1)return 0;
+	if(s[i][j] == '#' || s[i+1][j] == '#'||s[i+1][j+1] == '#'||s[i+1][j-1] == '#'||s[i+2][j] == '#')return 0;
+	s[i][j] = '#';
+	s[i+1][j-1] = '#';
+	s[i+1][j] = '#';
+	s[i+1][j+1] = '#';
+	s[i+2][j] = '#';
+	return 1;
 }
 int main()
 {
 	ios_base::sync_with_stdio(false);
 	cin.tie(NULL);
-	int n, m, a, node, height, l, r, co, cur;
-	cin >> n >> m;
-	FOR(i,2,n+1)
+	cin >> n;
+	FOR(i,0,n)cin >> s[i];
+	FOR(i,0,n)
 	{
-		cin >> a;
-		v[a].pb(i);
-	}
-	cin >> s;
-	dfs();
-	while(m--)
-	{
-		cin >> node >> height;
-		r = upper_bound(all(dpt_time[height]), en[node]) - dpt_time[height].begin();
-		l = lower_bound(all(dpt_time[height]), st[node]) - dpt_time[height].begin();
-		if(l>r || l == r)cout<<"Yes\n";
-		else
+		FOR(j,0,n)
 		{
-			if(l > 0)
-				cur = cumsum[height][r-1] ^ cumsum[height][l-1];
-			else
-				cur = cumsum[height][r-1];	
-			co = __builtin_popcount(cur);
-			if(co>1)cout<<"No\n";
-			else cout<<"Yes\n";
+			if(s[i][j] == '#')continue;
+			if(mark(i,j))continue;
+			cout<<"NO";
+			return 0;
 		}
 	}
+	FOR(i,0,n)
+	{
+		FOR(j,0,n)
+		{
+			if(s[i][j] != '#')
+			{
+				cout<<"NO";
+				return 0;
+			}
+		}
+	}
+	cout<<"YES";
 	return 0;
 }

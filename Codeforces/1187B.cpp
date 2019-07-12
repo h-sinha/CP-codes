@@ -1,7 +1,4 @@
 #include<bits/stdc++.h>
-#include <ext/pb_ds/assoc_container.hpp>
-#include <ext/pb_ds/tree_policy.hpp>
-using namespace __gnu_pbds;
 using namespace std;
 #define DEBUG
 #ifdef DEBUG
@@ -31,52 +28,48 @@ using namespace std;
 typedef long long ll;
 typedef long double ld;
 typedef	priority_queue<pii,std::vector<pii>,greater<pii> > revpr;
-
-typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_update> pbds;
-// ordered_set X
-//K-th smallest
-//*X.find_by_order(k-1)
-//NO OF ELEMENTS < A
-//X.order_of_key(A)
-
 const int L=1e6+7;
-int a[L], ans=INT_MIN, nxt[L], prv[L];
+const int M=27;
+int co[L][M], cur_co[M];
+bool check(int val)
+{
+	FOR(i,0,26)
+		if(co[val][i] < cur_co[i])
+			return 0;
+	return 1;
+}
+void ser(int n)
+{
+	int l=0,r=n-1,mid;
+	while(l<r-1)
+	{
+		mid=(l+r)/2;
+		if(check(mid))
+			r=mid;
+		else l=mid;
+	}
+	while(check(r))r--;
+	cout<<r+2<<ln;
+	return;
+}
 int main()
 {
 		ios_base::sync_with_stdio(false);
 	 	cin.tie(NULL);
-	 	int n;
-	 	cin>>n;
-	 	FOR(i,0,n)cin>>a[i];
-	 	int l = 0, r = 1;
-	 	while(l < n)
+	 	string s;
+	 	int n, m, len;
+	 	cin >> n;
+	 	cin >> s;
+	 	FOR(i,0,n)co[i][s[i]-'a']++;
+	 	FOR(i,1,n+1)FOR(j,0,26)co[i][j] += co[i-1][j];
+	 	cin >> m;
+	 	while(m--)
 	 	{
-	 		if(r < n && a[r] > a[r-1])r++;
-	 		else
-	 		{
-	 			while(l<r)nxt[l++] = r - 1;
-	 			r++;
-	 		}
+			cin >> s;
+			len = s.length();
+			FOR(i,0,26)cur_co[i] = 0;
+			FOR(i,0,len)cur_co[s[i]-'a']++;
+			ser(n);	 		
 	 	}
-	 	while(r >= 0)
-	 	{
-	 		if(l >= 0 && a[l] < a[l+1])l--;
-	 		else
-	 		{
-	 			while(l<r)prv[r--] = l + 1;
-	 			l--;
-	 		}
-	 	}
-	 	ans = max(nxt[1] + 1, nxt[0]);
-	 	FOR(i,1,n-1)
-	 	{
-	 		if(a[i-1] + 1 < a[i+1])
-	 			ans = max(ans, nxt[i+1] + 1 - prv[i-1]);
-	 		ans = max(ans, nxt[i+1] - i + 1);
-	 		ans = max(ans, i - prv[i-1] + 1);
-	 	}
-	 	ans = max(ans, n - prv[n-1]);
-	 	ans = max(ans, n - prv[n-2]);
-	 	cout << ans;
 		return 0;
 }
