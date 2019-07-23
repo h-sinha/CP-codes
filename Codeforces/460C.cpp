@@ -1,5 +1,19 @@
 #include<bits/stdc++.h>
 using namespace std;
+#define DEBUG
+#ifdef DEBUG
+#define debug(...) __f(#__VA_ARGS__, __VA_ARGS__)
+	template <typename Arg1>
+	void __f(const char* name, Arg1&& arg1){
+		cerr << name << " : " << arg1 << std::endl;
+	}
+	template <typename Arg1, typename... Args>
+	void __f(const char* names, Arg1&& arg1, Args&&... args){
+		const char* comma = strchr(names + 1, ','); cerr.write(names, comma - names) << " : " << arg1<<" | ";__f(comma+1, args...);
+	}
+#else
+#define debug(...)
+#endif
 #define FOR(i,a,b) 	for(ll i=a;i<b;++i)
 #define RFOR(i,a,b) 	for(ll i=a;i>=b;--i)
 #define ln 		"\n"
@@ -13,31 +27,47 @@ using namespace std;
 typedef long long ll;
 typedef long double ld;
 const int L = 1e5+7;
-ll a[L], n, m, w, au[L];
+ll a[L], n, m, w, au[L], add[L];
 bool check(ll val)
 {
-	FOR(i,0,n)au[i] = 0;
-	FOR(i,0,n)au[i] = max(0LL, val - a[i]);
-	ll prev = -1, sumis =0, aux = -1;
-	FOR(i,0,n)cout<<au[i]<<" - ";
-	cout<<ln;
-
-	FOR(i,0,n)
+	FOR(i,0,n)au[i] = a[i], add[i] = 0;
+	ll co = 0;
+	ll cur;
+	FOR(i,0,n-w+1)
 	{
-		
+		au[i] += add[i];
+		add[i+1] += add[i];
+		add[i] = 0;
+		if(au[i] >= val)continue;
+		cur = val - au[i];
+		add[i+1] += cur;
+		add[i+w] -= cur;
+		au[i] += cur;
+		co += cur;
 	}
-
-
-	if(sumis <= m)return 1;
+	int f = 0;
+	std::vector<ll> v;
+	FOR(i,n-w+1,n)
+	{
+		au[i] += add[i];
+		add[i+1] += add[i];
+		add[i] = 0;
+		if(au[i] < val)
+		{
+			v.pb(val - au[i]);
+		}
+	}
+	sort(v.begin(), v.end());
+	if(!v.empty())co += v[sz(v) - 1];
+	if(co <= m)return 1;
 	return 0;
 }
 void ser()
 {
-	ll l=1,r=1e9,mid;
+	ll l=1,r=1e10,mid;
 	while(l<r-1)
 	{
-		mid=l+(r-l)/2;
-		cout<<l <<" "<<r<<" "<<mid<<ln;
+		mid=(l+r)/2;
 		if(check(mid))
 			l=mid;
 		else r=mid;
@@ -52,7 +82,6 @@ int main()
 	 	cin.tie(NULL);
 	 	cin >> n >> m >> w;
 	 	FOR(i,0,n)cin>>a[i]; 
-	 	// ser();
-	 	check(500);
+	 	ser();
 		return 0;
 }
