@@ -32,8 +32,6 @@ int main()
 	 		if(counter.find(a[i])==counter.end())counter[a[i]]=cur,a[i]=cur++;
 	 		else a[i]=counter[a[i]];
 	 	}
-	 	// FOR(i,0,n)cout<<a[i]<<" ";
-	 	// cout<<ln;
 	 	FOR(i,0,n)FOR(j,0,n)dp[i][j]=1;
 	 	FOR(i,0,n)
 	 	{
@@ -41,7 +39,6 @@ int main()
 	 		{
 	 			dp[i][a[j]]=max(dp[i][a[j]],1+dp[j][a[i]]);
 	 			ans=max(ans,dp[i][a[j]]);
-	 			// debug3(i,a[j],dp[i][a[j]]);
 	 		}
 	 	}
 	 	cout<<ans;
