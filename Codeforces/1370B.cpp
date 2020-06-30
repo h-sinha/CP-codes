@@ -26,8 +26,10 @@ using namespace std;
 #define F first
 #define S second
 #define all(c)	c.begin(),c.end()
+#define rall(c) c.rbegin(), c.rend()
 #define trace(c,x) for(auto &x:c)
 #define pii pair<ll,ll>
+#define init(a, x) memset(a,x,sizeof(a))
 typedef long long ll;
 typedef long double ld;
 typedef	priority_queue<pii,std::vector<pii>,greater<pii> > revpr;
@@ -38,42 +40,43 @@ typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_upda
 //*X.find_by_order(k-1)
 //NO OF ELEMENTS < A
 //X.order_of_key(A)
-
 const int L=1e6+7;
-int a[L], co[L], co1[L];
+map<ll,ll> counter;
+int co[3], a[L];
+std::vector<int> v[2];
+void fff()
+{
+	int n;
+	cin >> n;
+	co[0] = co[1] = 0;
+	v[0].clear();
+	v[1].clear();
+	FOR(i,0,2*n)
+	{
+		cin >> a[i];
+		co[a[i]%2]++;
+		v[a[i]%2].pb(i+1);
+	}
+	int cc = 0;
+	for(int i=0;i<sz(v[0])-1;i+=2)
+	{
+		if(cc>=n-1)break;
+		cc++;
+		cout<<v[0][i]<<" "<<v[0][i+1]<<ln;
+	}
+	for(int i=0;i<sz(v[1])-1;i+=2)
+	{
+		if(cc>=n-1)break;
+		cc++;
+		cout<<v[1][i]<<" "<<v[1][i+1]<<ln;
+	}
+}
 int main()
 {
-		ios_base::sync_with_stdio(false);
-	 	cin.tie(NULL);
-	 	int n;
-	 	cin >> n;
-	 	FOR(i,0,n)
-	 		cin >> a[i];
-	 	sort(a,a+n);
-	 	vector<int> v;
-	 	FOR(i,0,n)
-	 	{
-	 		FOR(j,i+1,n)
-	 		{
-	 			co[a[j]-a[i]]++;
-	 			co1[a[j]-a[i]]++;
-	 		}
-	 	}
-	 	FOR(i,1,5001)co[i] += co[i-1];
-	 	ld num = 0, deno = pow(co[5000],3), tot;
-	 	FOR(i,0,5000)
-	 	{
-	 		FOR(j,i,5000)
-	 		{
-	 			if(i+j>=5000)break;
-	 			if(co1[i]*co1[j] == 0)continue;
-	 			tot = co[5000]-co[i+j];
-	 			if(i == j)num += tot*co1[i]*co1[j];
-	 			else num += tot*co1[i]*co1[j]*2;
-	 			// debug(i,j,co1[i],co1[j],tot);
-	 		}
-	 	}
-	 			// debug(num,deno);
-	 	printf("%.10Lf\n",num/deno);
-		return 0;
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+	int t;cin >> t;while(t--)
+	fff();
+	return 0;
 }

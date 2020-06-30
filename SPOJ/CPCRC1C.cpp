@@ -26,8 +26,10 @@ using namespace std;
 #define F first
 #define S second
 #define all(c)	c.begin(),c.end()
+#define rall(c) c.rbegin(), c.rend()
 #define trace(c,x) for(auto &x:c)
 #define pii pair<ll,ll>
+#define init(a, x) memset(a,x,sizeof(a))
 typedef long long ll;
 typedef long double ld;
 typedef	priority_queue<pii,std::vector<pii>,greater<pii> > revpr;
@@ -38,42 +40,72 @@ typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_upda
 //*X.find_by_order(k-1)
 //NO OF ELEMENTS < A
 //X.order_of_key(A)
-
 const int L=1e6+7;
-int a[L], co[L], co1[L];
+string s;
+ll n, dp[11][11][2];
+ll solve(int pos,int num, int f)
+{
+	int mx = s[pos] - '0';
+	if(f == 0 && mx<num)return 0;
+	if(pos>=n-1)
+	{
+		if(dp[pos][num][f] == -1)dp[pos][num][f] = 0;
+		dp[pos][num][f]++;
+		return 1;
+	}
+	if(dp[pos][num][f] != -1)return dp[pos][num][f];
+	ll &ret = dp[pos][num][f];
+	ret = 0;
+	int tf = 0;
+	mx = s[pos+1]-'0';
+	FOR(i,0,10)
+	{
+		if(f)tf = 1;
+		else if(f == 0 && i<mx)tf = 1;
+		else tf =0;
+		ret += solve(pos+1,i,tf);
+	}
+	return ret;
+}
+void fff()
+{
+	ll a, b, ans = 0;
+	cin >> a >> b;
+	if(a == -1)exit(0);
+	s = to_string(b);
+	n = s.length();
+	init(dp,-1);
+	FOR(i,0,10)
+	{
+		if(i<s[0]-'0')solve(0,i,1);
+		else solve(0,i,0);
+	}
+	FOR(i,0,n)
+		FOR(j,1,10)
+			FOR(k,0,2)
+				if(dp[i][j][k]>0)
+				{
+					debug(i,j,k,dp[i][j][k]);
+					ans += (j*dp[i][j][k]);
+				}
+	if(a > 1)
+	{
+		s = to_string(a-1);
+		n = s.length();
+		init(dp,-1);
+		FOR(i,0,n)
+			FOR(j,1,10)
+				FOR(k,0,2)
+					if(dp[i][j][k]>0)
+						ans -= (j*dp[i][j][k]);
+	}
+	cout<<ans<<ln;
+}
 int main()
 {
-		ios_base::sync_with_stdio(false);
-	 	cin.tie(NULL);
-	 	int n;
-	 	cin >> n;
-	 	FOR(i,0,n)
-	 		cin >> a[i];
-	 	sort(a,a+n);
-	 	vector<int> v;
-	 	FOR(i,0,n)
-	 	{
-	 		FOR(j,i+1,n)
-	 		{
-	 			co[a[j]-a[i]]++;
-	 			co1[a[j]-a[i]]++;
-	 		}
-	 	}
-	 	FOR(i,1,5001)co[i] += co[i-1];
-	 	ld num = 0, deno = pow(co[5000],3), tot;
-	 	FOR(i,0,5000)
-	 	{
-	 		FOR(j,i,5000)
-	 		{
-	 			if(i+j>=5000)break;
-	 			if(co1[i]*co1[j] == 0)continue;
-	 			tot = co[5000]-co[i+j];
-	 			if(i == j)num += tot*co1[i]*co1[j];
-	 			else num += tot*co1[i]*co1[j]*2;
-	 			// debug(i,j,co1[i],co1[j],tot);
-	 		}
-	 	}
-	 			// debug(num,deno);
-	 	printf("%.10Lf\n",num/deno);
-		return 0;
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+	while(1)fff();
+	return 0;
 }

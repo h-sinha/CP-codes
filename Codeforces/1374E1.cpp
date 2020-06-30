@@ -26,8 +26,10 @@ using namespace std;
 #define F first
 #define S second
 #define all(c)	c.begin(),c.end()
+#define rall(c) c.rbegin(), c.rend()
 #define trace(c,x) for(auto &x:c)
 #define pii pair<ll,ll>
+#define init(a, x) memset(a,x,sizeof(a))
 typedef long long ll;
 typedef long double ld;
 typedef	priority_queue<pii,std::vector<pii>,greater<pii> > revpr;
@@ -38,42 +40,45 @@ typedef tree<int,null_type,less<int>,rb_tree_tag,tree_order_statistics_node_upda
 //*X.find_by_order(k-1)
 //NO OF ELEMENTS < A
 //X.order_of_key(A)
-
 const int L=1e6+7;
-int a[L], co[L], co1[L];
+std::vector<ll> v1, v2, v3;
+void fff()
+{
+	int n, k, t, a, b;
+	cin >> n >> k;
+	FOR(i,0,n)
+	{
+		cin >> t >> a >> b;
+		if(a&b)v1.pb(t);
+		else if(a)v2.pb(t);
+		else if(b)v3.pb(t);
+	}
+	sort(all(v1));
+	sort(all(v2));
+	sort(all(v3));
+	FOR(i,1,sz(v1))v1[i] += v1[i-1];
+	FOR(i,1,sz(v2))v2[i] += v2[i-1];
+	FOR(i,1,sz(v3))v3[i] += v3[i-1];
+	ll ans = LLONG_MAX, req;
+	if(k<=sz(v2) && k<=sz(v3))
+	{
+		ans = v2[k-1] + v3[k-1];
+	}
+	FOR(i,0,sz(v1))
+	{
+		req = k - i - 1;
+		if(req>sz(v2)||req>sz(v3))continue;
+		if(req == 0)ans = min(ans, v1[i]);
+		else ans = min(ans, v1[i] + v2[req-1] + v3[req-1]);
+	}
+	cout << ((ans == LLONG_MAX) ? -1 : ans)<<ln;
+}
 int main()
 {
-		ios_base::sync_with_stdio(false);
-	 	cin.tie(NULL);
-	 	int n;
-	 	cin >> n;
-	 	FOR(i,0,n)
-	 		cin >> a[i];
-	 	sort(a,a+n);
-	 	vector<int> v;
-	 	FOR(i,0,n)
-	 	{
-	 		FOR(j,i+1,n)
-	 		{
-	 			co[a[j]-a[i]]++;
-	 			co1[a[j]-a[i]]++;
-	 		}
-	 	}
-	 	FOR(i,1,5001)co[i] += co[i-1];
-	 	ld num = 0, deno = pow(co[5000],3), tot;
-	 	FOR(i,0,5000)
-	 	{
-	 		FOR(j,i,5000)
-	 		{
-	 			if(i+j>=5000)break;
-	 			if(co1[i]*co1[j] == 0)continue;
-	 			tot = co[5000]-co[i+j];
-	 			if(i == j)num += tot*co1[i]*co1[j];
-	 			else num += tot*co1[i]*co1[j]*2;
-	 			// debug(i,j,co1[i],co1[j],tot);
-	 		}
-	 	}
-	 			// debug(num,deno);
-	 	printf("%.10Lf\n",num/deno);
-		return 0;
+	ios_base::sync_with_stdio(false);
+	cin.tie(NULL);
+	cout.tie(NULL);
+	//int t;cin >> t;while(t--)
+	fff();
+	return 0;
 }
